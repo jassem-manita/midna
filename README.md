@@ -1,12 +1,12 @@
-﻿# ZAP - Python Package Operations
+# ZAP - Python Package Operations
 
 A smarter Python package installer.
 
-> ** Current Status**: ZAP is ready to use! PyPI publication coming soon.
+> **🚀 Current Status**: ZAP is ready to use! PyPI publication coming soon.
 
 ## Overview
 
-ZAP improves upon pip install -r requirements.txt by providing preview functionality, skipping already installed packages, and offering clear progress feedback.
+ZAP improves upon `pip install -r requirements.txt` by providing preview functionality, skipping already installed packages, and offering clear progress feedback.
 
 ## Features
 
@@ -20,16 +20,16 @@ ZAP improves upon pip install -r requirements.txt by providing preview functiona
 
 ### Install ZAP
 
-`ash
+```bash
 # Clone and install locally
 git clone https://github.com/jassem-manita/zap.git
 cd zap
 pip install .
-`
+```
 
 ### Basic Usage
 
-`ash
+```bash
 # Install from requirements.txt (preview first)
 zap --dry-run
 
@@ -38,13 +38,13 @@ zap
 
 # Install from a custom requirements file
 zap my-packages.txt
-`
+```
 
 ## Installation Methods
 
 ### Method 1: Install as Command (Recommended)
 
-`ash
+```bash
 # Clone the repository
 git clone https://github.com/jassem-manita/zap.git
 cd zap
@@ -56,11 +56,11 @@ pip install .
 zap --help
 zap --dry-run
 zap
-`
+```
 
 ### Method 2: Direct Script Usage
 
-`ash
+```bash
 # Download just the script
 curl -O https://raw.githubusercontent.com/jassem-manita/zap/main/zap.py
 
@@ -68,11 +68,11 @@ curl -O https://raw.githubusercontent.com/jassem-manita/zap/main/zap.py
 python zap.py --help
 python zap.py --dry-run
 python zap.py
-`
+```
 
 ## Command Line Options
 
-`	ext
+```text
 usage: zap [-h] [--dry-run] [--version] [file]
 
 positional arguments:
@@ -82,11 +82,11 @@ optional arguments:
   -h, --help  show this help message and exit
   --dry-run   See what would be installed without actually doing it
   --version   show program's version number and exit
-`
+```
 
 ## Examples
 
-`ash
+```bash
 # Preview what would be installed
 zap --dry-run
 
@@ -98,18 +98,18 @@ zap dev-requirements.txt
 
 # Check version
 zap --version
-`
+```
 
 ## Sample Output
 
-`	ext
+```text
 ZAP - Python Package Operations v1.0.0
 ==================================================
 DRY RUN MODE - Nothing will actually be installed
 Found 3 packages in your requirements file
 
 Already have these (1):
-   requests>=2.25.0
+  ✓ requests>=2.25.0
 
 Would install these (2):
   + numpy>=1.21.0
@@ -119,11 +119,11 @@ To actually install them, run:
   zap 
 
 Dry run complete!
-`
+```
 
 ## Why ZAP?
 
-- **Preview before installing**: See what will happen with --dry-run
+- **Preview before installing**: See what will happen with `--dry-run`
 - **Skip duplicates**: Won't reinstall packages you already have
 - **Clear progress**: Shows exactly what's happening, not pip's verbose output
 - **Simple**: Just works with your existing requirements.txt files
@@ -144,12 +144,10 @@ Dry run complete!
 
 ## License
 
-Licensed under the Apache License, Version 2.0. See LICENSE for details.
+Licensed under the Apache License, Version 2.0. See [LICENSE](LICENSE) for details.
 
 ## Author
 
-Created by Jassem - because pip's output was driving me crazy.
+Created by Jassem Manita.
 
 ---
-
-**Happy installing!** 
