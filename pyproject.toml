@@ -8,7 +8,7 @@ version = "1.0.0"
 description = "A smarter Python package installer"
 readme = "README.md"
 authors = [
-    {name = "Jassem", email = "jassem@example.com"}
+    {name = "Jassem", email = "jasemmanita00@gmail.com"}
 ]
 license = {text = "Apache-2.0"}
 requires-python = ">=3.6"

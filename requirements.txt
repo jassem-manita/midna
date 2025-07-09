@@ -1,4 +1,1 @@
-# Example requirements for testing ZAP
-requests>=2.25.0
-click>=8.0.0
-colorama>=0.4.0
+﻿requests==2.31.0
