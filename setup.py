@@ -1,23 +1,7 @@
 from setuptools import setup
 
-with open("README.md", "r", encoding="utf-8") as fh:
-    long_description = fh.read()
-
-setup(
-    name="zap",
-    version="1.0.0",
-    author="Jassem Manita",
-    description="ZAP - A package installer that actually makes sense. Shows you what's happening and doesn't reinstall stuff you already have.",
-    long_description=long_description,
-    long_description_content_type="text/markdown",
-    url="https://github.com/jassem/zap",
-    py_modules=["zap"],
-    classifiers=[
-        "Development Status :: 4 - Beta",
-        "Intended Audience :: Developers",
-        "License :: OSI Approved :: Apache Software License",
-        "Operating System :: OS Independent",
-        "Programming Language :: Python :: 3",
+if __name__ == "__main__":
+    setup()
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
