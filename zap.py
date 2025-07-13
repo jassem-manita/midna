@@ -161,7 +161,7 @@ def install_packages(packages: List[str], dry_run: bool = False) -> tuple:
             print(f"   * {pkg}")
         print("\nTIP: Run without --dry-run to actually install packages")
         logger.info(f"Dry run completed. Would install {to_install_count}")
-        return total_packages, total_packages  # This makes successful == total
+        return total_packages, total_packages
 
     print(f"\nINSTALLING: Installing packages ({to_install_count}):")
     successful = 0
