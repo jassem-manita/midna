@@ -4,30 +4,67 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "zap"
-version = "1.0.0"
-description = "A smarter Python package installer"
+version = "0.1.0"
+description = "Smart pip requirements installer"
 readme = "README.md"
-authors = [
-    {name = "Jassem", email = "jasemmanita00@gmail.com"}
-]
 license = {text = "Apache-2.0"}
-requires-python = ">=3.6"
+authors = [
+    {name = "Jassem Manita", email = "jassem.manita@example.com"}
+]
 classifiers = [
     "Development Status :: 4 - Beta",
-    "Environment :: Console",
     "Intended Audience :: Developers",
-    "Topic :: Software Development :: Build Tools",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.6",
     "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11"
+    "Programming Language :: Python :: 3.11",
 ]
+requires-python = ">=3.6"
+dependencies = []
+keywords = ["pip", "requirements", "installer", "package", "management"]
+
+[project.urls]
+Homepage = "https://github.com/jassem-manita/zap"
+Repository = "https://github.com/jassem-manita/zap"
+Issues = "https://github.com/jassem-manita/zap/issues"
 
 [project.scripts]
 zap = "zap:main"
 
-[tool.setuptools]
-py-modules = ["zap"]
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = "-v --tb=short"
+
+[tool.coverage.run]
+source = ["zap"]
+omit = ["tests/*"]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if self.debug:",
+    "if settings.DEBUG",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if 0:",
+    "if __name__ == .__main__.:",
+]
+
+[tool.black]
+line-length = 88
+target-version = ['py36']
+include = '\.pyi?$'
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+line_length = 88

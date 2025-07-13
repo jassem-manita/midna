@@ -1,80 +1,128 @@
 #!/usr/bin/env python3
 """
-ZAP - Python Package Operations
+ZAP - Smart pip requirements installer
 
-I got tired of pip's messy output and built this instead.
-It shows you what's happening and doesn't reinstall stuff you already have.
+A better way to install Python packages from requirements files.
+Only installs missing packages and provides clear progress feedback.
 
-Copyright 2025 Jassem
+Usage:
+    zap [requirements_file] [--dry-run] [--verbose] [--version] [--help]
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+Author: Jassem Manita
+License: Apache License 2.0
+Repository: https://github.com/jassem-manita/zap
 """
 
+import argparse
+import logging
+import os
 import subprocess
 import sys
-import argparse
-import os
-import re
 from pathlib import Path
+from typing import List, Set
 
-__version__ = "1.0.0"
+__version__ = "0.1.0"
 
-def read_requirements(file_path):
-    """Read a requirements file and return the package names"""
-    packages = []
-    try:
-        with open(file_path, 'r', encoding='utf-8') as f:
-            for line in f:
-                line = line.strip()
-                if line and not line.startswith('#'):
-                    packages.append(line)
-    except FileNotFoundError:
-        print(f"Can't find {file_path} - are you sure it exists?")
-        return []
-    except Exception as e:
-        print(f"Something went wrong reading {file_path}: {e}")
-        return []
+
+def setup_logging(verbose: bool = False) -> logging.Logger:
+    log_dir = Path.home() / ".zap" / "logs"
+    log_dir.mkdir(parents=True, exist_ok=True)
     
-    return packages
+    log_file = log_dir / "zap.log"
+    
+    logger = logging.getLogger("zap")
+    logger.setLevel(logging.DEBUG)
+    logger.handlers.clear()
+    
+    file_handler = logging.FileHandler(log_file)
+    file_handler.setLevel(logging.DEBUG)
+    file_formatter = logging.Formatter(
+        "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    )
+    file_handler.setFormatter(file_formatter)
+    logger.addHandler(file_handler)
+    
+    if verbose:
+        console_handler = logging.StreamHandler()
+        console_handler.setLevel(logging.INFO)
+        console_formatter = logging.Formatter("%(levelname)s: %(message)s")
+        console_handler.setFormatter(console_formatter)
+        logger.addHandler(console_handler)
+    
+    return logger
 
-def check_installed_packages():
-    """Figure out what packages are already installed"""
+
+def read_requirements(file_path: str) -> List[str]:
+    logger = logging.getLogger("zap")
+    logger.info(f"Reading requirements from: {file_path}")
+    
+    if not os.path.exists(file_path):
+        logger.error(f"Requirements file not found: {file_path}")
+        raise FileNotFoundError(f"Requirements file '{file_path}' not found.")
+    
     try:
-        result = subprocess.run([sys.executable, '-m', 'pip', 'list'], 
-                              capture_output=True, text=True, timeout=15) 
-        if result.returncode == 0:
-            installed = set()
-            for line in result.stdout.split('\n')[2:]:
-                if line.strip():
-                    package_name = line.split()[0].lower()
-                    installed.add(package_name)
-            return installed
+        with open(file_path, "r", encoding="utf-8") as file:
+            lines = file.readlines()
+        
+        packages = []
+        for line in lines:
+            line = line.strip()
+            if line and not line.startswith("#"):
+                packages.append(line)
+        
+        logger.info(f"Found {len(packages)} packages in requirements file")
+        return packages
+        
     except Exception as e:
-        print(f"Couldn't check what's already installed: {e}")
-    return set()
+        logger.error(f"Error reading requirements file: {e}")
+        raise
 
-def parse_package_name(requirement):
-    """Extract the package name from requirement strings"""
-    name = re.split(r'[<>=!~]', requirement)[0].strip()
-    return name.lower()
 
-def dry_run_install(packages):
-    """Show what would happen without actually installing anything"""
-    print(f"ZAP - Python Package Operations v{__version__}")
-    print("=" * 50)
-    print("DRY RUN MODE - Nothing will actually be installed")
-    print(f"Found {len(packages)} packages in your requirements file")
-    print()
+def parse_package_name(requirement: str) -> str:
+    separators = [">=", "<=", "==", "!=", ">", "<", "~="]
+    
+    name = requirement
+    for sep in separators:
+        if sep in name:
+            name = name.split(sep)[0]
+            break
+    
+    return name.strip()
+
+
+def check_installed_packages() -> Set[str]:
+    logger = logging.getLogger("zap")
+    logger.info("Checking currently installed packages...")
+    
+    try:
+        result = subprocess.run(
+            [sys.executable, "-m", "pip", "list", "--format=freeze"],
+            capture_output=True,
+            text=True,
+            check=True,
+        )
+        
+        installed = set()
+        for line in result.stdout.strip().split("\n"):
+            if "==" in line:
+                package_name = line.split("==")[0].lower()
+                installed.add(package_name)
+        
+        logger.info(f"Found {len(installed)} installed packages")
+        return installed
+        
+    except subprocess.CalledProcessError as e:
+        logger.error(f"Failed to check installed packages: {e}")
+        print(f"ERROR: Error checking installed packages: {e}")
+        return set()
+
+
+def install_packages(packages: List[str], dry_run: bool = False) -> tuple:
+    logger = logging.getLogger("zap")
+    
+    if not packages:
+        print("INFO: No packages to install.")
+        return 0, 0
     
     installed = check_installed_packages()
     
@@ -82,133 +130,171 @@ def dry_run_install(packages):
     already_installed = []
     
     for pkg in packages:
-        pkg_name = parse_package_name(pkg)
-        if pkg_name in installed:
+        package_name = parse_package_name(pkg).lower()
+        if package_name in installed:
             already_installed.append(pkg)
         else:
             to_install.append(pkg)
     
+    total_packages = len(packages)
+    already_count = len(already_installed)
+    to_install_count = len(to_install)
+    
+    print("INFO: Requirements Analysis:")
+    print(f"   * Total packages: {total_packages}")
+    print(f"   * Already installed: {already_count}")
+    print(f"   * Need installation: {to_install_count}")
+    
     if already_installed:
-        print(f"Already have these ({len(already_installed)}):")
+        print(f"\nOK: Already installed ({already_count}):")
         for pkg in already_installed:
-            print(f"  ✓ {pkg}")
-        print()
-    
-    if to_install:
-        print(f"Would install these ({len(to_install)}):")
-        for pkg in to_install:
-            print(f"  + {pkg}")
-        print()
-        print("To actually install them, run:")
-        print(f"  zap {' '.join(sys.argv[1:]).replace('--dry-run', '').strip()}")
-    else:
-        print("Looks like you already have everything! 🎉")
-    
-    print("\nDry run complete!")
-
-def install_packages(packages):
-    """Actually install the packages for real"""
-    print(f"ZAP - Python Package Operations v{__version__}")
-    print("=" * 50)
-    print(f"Time to install {len(packages)} packages...")
-    print()
-    
-    installed = check_installed_packages()
-    
-    to_install = []
-    skipped = 0
-    
-    for pkg in packages:
-        pkg_name = parse_package_name(pkg)
-        if pkg_name in installed:
-            print(f"  ✓ {pkg} (already have this one)")
-            skipped += 1
-        else:
-            to_install.append(pkg)
-    
-    if skipped > 0:
-        print(f"\nSkipped {skipped} packages you already have")
+            print(f"   * {pkg}")
     
     if not to_install:
-        print("\nYou already have everything! Nothing to do. 🎉")
-        return True
+        print("\nSUCCESS: All packages are already installed!")
+        logger.info("All packages already installed, nothing to do")
+        return total_packages, total_packages
     
-    print(f"\nInstalling {len(to_install)} new packages...")
+    if dry_run:
+        print(f"\nDRY RUN MODE - Would install ({to_install_count}):")
+        for pkg in to_install:
+            print(f"   * {pkg}")
+        print("\nTIP: Run without --dry-run to actually install packages")
+        logger.info(f"Dry run completed. Would install {to_install_count}")
+        return 0, total_packages
     
-    success_count = 0
+    print(f"\nINSTALLING: Installing packages ({to_install_count}):")
+    successful = 0
+    
     for i, pkg in enumerate(to_install, 1):
-        print(f"  [{i}/{len(to_install)}] Installing {pkg}...")
+        print(f"   [{i}/{to_install_count}] Installing {pkg}...", end=" ")
+        logger.info(f"Installing package {i}/{to_install_count}: {pkg}")
+        
         try:
-            result = subprocess.run([
-                sys.executable, '-m', 'pip', 'install', pkg
-            ], capture_output=True, text=True, timeout=60)  
+            subprocess.run(
+                [sys.executable, "-m", "pip", "install", pkg],
+                capture_output=True,
+                text=True,
+                check=True,
+            )
+            print("OK")
+            successful += 1
+            logger.info(f"Successfully installed: {pkg}")
             
-            if result.returncode == 0:
-                print(f"    ✓ {pkg} installed successfully")
-                success_count += 1
-            else:
-                error_msg = result.stderr.strip()
-                if len(error_msg) > 80:  
-                    error_msg = error_msg[:80] + "..."
-                print(f"    ✗ {pkg} failed: {error_msg}")
-        except subprocess.TimeoutExpired:
-            print(f"    ✗ {pkg} took too long and timed out")
-        except Exception as e:
-            print(f"    ✗ {pkg} had an error: {e}")
+        except subprocess.CalledProcessError as e:
+            print("FAILED")
+            error_msg = f"Failed to install {pkg}: {e}"
+            print(f"      Error: {e.stderr.strip() if e.stderr else 'Unknown error'}")
+            logger.error(error_msg)
     
-    print("\n" + "=" * 50)
-    print("HOW DID WE DO?")
-    print("=" * 50)
-    print(f"Total packages: {len(packages)}")
-    print(f"Already had: {skipped}")
-    print(f"Newly installed: {success_count}")
-    print(f"Failed: {len(to_install) - success_count}")
+    total_successful = successful + already_count
+    success_rate = (total_successful / total_packages) * 100
     
-    if to_install:
-        success_rate = success_count/len(to_install)*100
-        print(f"Success rate: {success_rate:.1f}%")
-        if success_rate == 100:
-            print("Perfect! 🎉")
-        elif success_rate >= 80:
-            print("Pretty good! 👍")
-        else:
-            print("Could be better, but that's pip for you 🤷")
+    print("\nSUMMARY: Installation Summary:")
+    print(f"   * Successfully installed: {successful}/{to_install_count}")
+    print(
+        f"   * Overall success rate: {total_successful}/{total_packages} "
+        f"({success_rate:.1f}%)"
+    )
     
-    return success_count == len(to_install)
+    if successful == to_install_count:
+        print("SUCCESS: All packages installed successfully!")
+        logger.info("All packages installed successfully")
+    else:
+        failed = to_install_count - successful
+        print(f"WARNING: {failed} package(s) failed to install")
+        logger.warning(f"{failed} packages failed to install")
+    
+    return total_successful, total_packages
+
 
 def main():
-    """Main function - where the magic happens"""
     parser = argparse.ArgumentParser(
-        description="ZAP - Python Package Operations: The installer that actually makes sense",
-        prog="zap"
+        description="ZAP - A smarter pip requirements installer",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+Examples:
+  zap                          Install from requirements.txt
+  zap requirements.txt         Install from specific file
+  zap --dry-run               Preview installation from requirements.txt
+  zap --verbose requirements.txt  Install with detailed logging
+
+For more information, visit: https://github.com/jassem-manita/zap
+        """,
     )
-    parser.add_argument('file', nargs='?', default='requirements.txt',
-                       help='Requirements file to install from (default: requirements.txt)')
-    parser.add_argument('--dry-run', action='store_true',
-                       help='See what would be installed without actually doing it')
-    parser.add_argument('--version', action='version', version=f'zap {__version__}')
+    
+    parser.add_argument(
+        "requirements_file",
+        nargs="?",
+        default="requirements.txt",
+        help="Requirements file to install from (default: requirements.txt)",
+    )
+    
+    parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="Show what would be installed without actually installing",
+    )
+    
+    parser.add_argument(
+        "--verbose",
+        action="store_true",
+        help="Enable verbose logging output",
+    )
+    
+    parser.add_argument(
+        "--version",
+        action="version",
+        version=f"ZAP {__version__}",
+        help="Show version information",
+    )
     
     args = parser.parse_args()
     
-    if not os.path.exists(args.file):
-        print(f"Can't find {args.file} - are you sure it exists?")
-        print("\nHere's how to use this:")
-        print("  zap                     # Install from requirements.txt")
-        print("  zap my-stuff.txt        # Install from a custom file")
-        print("  zap --dry-run           # See what would happen first")
-        return 1
+    logger = setup_logging(args.verbose)
+    logger.info(f"ZAP {__version__} started with args: {sys.argv[1:]}")
     
-    packages = read_requirements(args.file)
-    if not packages:
-        print("Didn't find any packages to install!")
-        return 1
+    print(f"ZAP {__version__} - Smart Python Package Installer")
+    print(f"Requirements file: {args.requirements_file}")
     
     if args.dry_run:
-        dry_run_install(packages)
-        return 0
-    else:
-        success = install_packages(packages)
-        return 0 if success else 1
+        print("Running in DRY RUN mode")
+    
+    print()
+    
+    try:
+        packages = read_requirements(args.requirements_file)
+        
+        if not packages:
+            print("INFO: No packages found in requirements file.")
+            logger.info("No packages found in requirements file")
+            return 0
+        
+        successful, total = install_packages(packages, args.dry_run)
+        
+        if successful == total:
+            exit_code = 0
+        else:
+            exit_code = 1
+            
+        logger.info(f"ZAP completed with exit code: {exit_code}")
+        return exit_code
+        
+    except FileNotFoundError as e:
+        print(f"ERROR: {e}")
+        logger.error(f"File not found: {e}")
+        return 1
+        
+    except KeyboardInterrupt:
+        print("\nWARNING: Installation interrupted by user")
+        logger.info("Installation interrupted by user")
+        return 130
+        
+    except Exception as e:
+        print(f"ERROR: Unexpected error: {e}")
+        logger.error(f"Unexpected error: {e}", exc_info=True)
+        return 1
+
 
 if __name__ == "__main__":
     sys.exit(main())
