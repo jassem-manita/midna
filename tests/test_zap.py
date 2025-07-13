@@ -13,10 +13,12 @@ class TestZapFunctionality(unittest.TestCase):
         self.assertEqual(zap.__version__, "0.1.0")
 
     def test_read_requirements_valid_file(self):
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.txt', delete=False) as f:
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".txt", delete=False) as f:
             temp_path = f.name
-            f.write("requests>=2.25.0\nnumpy>=1.20.0\n# This is a comment\n\npandas>=1.3.0")
-        
+            f.write(
+                "requests>=2.25.0\nnumpy>=1.20.0\n# This is a comment\n\npandas>=1.3.0"
+            )
+
         try:
             packages = zap.read_requirements(temp_path)
             self.assertEqual(len(packages), 3)
@@ -47,30 +49,35 @@ class TestZapFunctionality(unittest.TestCase):
 class TestZapCLI(unittest.TestCase):
 
     def test_zap_version_command(self):
-        result = subprocess.run([sys.executable, '-m', 'zap', '--version'],
-                              capture_output=True, text=True)
+        result = subprocess.run(
+            [sys.executable, "-m", "zap", "--version"], capture_output=True, text=True
+        )
         self.assertEqual(result.returncode, 0)
         self.assertIn("0.1.0", result.stdout)
 
     def test_zap_help_command(self):
-        result = subprocess.run([sys.executable, '-m', 'zap', '--help'],
-                              capture_output=True, text=True)
+        result = subprocess.run(
+            [sys.executable, "-m", "zap", "--help"], capture_output=True, text=True
+        )
         self.assertEqual(result.returncode, 0)
         self.assertIn("usage:", result.stdout.lower())
 
     def test_zap_dry_run_with_sample_file(self):
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.txt', delete=False) as f:
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".txt", delete=False) as f:
             temp_path = f.name
             f.write("requests>=2.25.0\nnumpy>=1.20.0\n")
-        
+
         try:
-            result = subprocess.run([sys.executable, '-m', 'zap', '--dry-run', temp_path],
-                                  capture_output=True, text=True)
-            
+            result = subprocess.run(
+                [sys.executable, "-m", "zap", "--dry-run", temp_path],
+                capture_output=True,
+                text=True,
+            )
+
             self.assertEqual(result.returncode, 0)
             self.assertIn("DRY RUN", result.stdout.upper())
             self.assertIn("Requirements Analysis", result.stdout)
-            
+
         finally:
             try:
                 os.unlink(temp_path)
@@ -78,10 +85,13 @@ class TestZapCLI(unittest.TestCase):
                 pass
 
     def test_zap_nonexistent_file(self):
-        result = subprocess.run([sys.executable, '-m', 'zap', 'nonexistent.txt'],
-                              capture_output=True, text=True)
+        result = subprocess.run(
+            [sys.executable, "-m", "zap", "nonexistent.txt"],
+            capture_output=True,
+            text=True,
+        )
         self.assertNotEqual(result.returncode, 0)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()
