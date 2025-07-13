@@ -179,7 +179,8 @@ def install_packages(packages: List[str], dry_run: bool = False) -> tuple:
     print("\nSUMMARY: Installation Summary:")
     print(f"   * Successfully installed: {successful}/{to_install_count}")
     print(
-        f"   * Overall success rate: {total_successful}/{total_packages} ({success_rate:.1f}%)"
+        f"   * Overall success rate: {total_successful}/{total_packages} "
+        f"({success_rate:.1f}%)"
     )
 
     if successful == to_install_count:
