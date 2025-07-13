@@ -170,7 +170,8 @@ def install_packages(packages: List[str], dry_run: bool = False) -> tuple:
         except subprocess.CalledProcessError as e:
             print("FAILED")
             error_msg = f"Failed to install {pkg}: {e}"
-            print(f"      Error: {e.stderr.strip() if e.stderr else 'Unknown error'}")
+            error_detail = e.stderr.strip() if e.stderr else "Unknown error"
+            print(f"      Error: {error_detail}")
             logger.error(error_msg)
 
     total_successful = successful + already_count
