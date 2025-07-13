@@ -103,22 +103,22 @@ zap --version
 ## Sample Output
 
 ```text
-ZAP - Python Package Operations v1.0.0
-==================================================
-DRY RUN MODE - Nothing will actually be installed
-Found 3 packages in your requirements file
+ZAP 0.1.0 - Smart Python Package Installer
+Requirements file: requirements.txt
 
-Already have these (1):
-  ✓ requests>=2.25.0
+INFO: Requirements Analysis:
+   * Total packages: 3
+   * Already installed: 1
+   * Need installation: 2
 
-Would install these (2):
-  + numpy>=1.21.0
-  + pandas>=1.3.0
+OK: Already installed (1):
+   * requests>=2.25.0
 
-To actually install them, run:
-  zap 
+DRY RUN MODE - Would install (2):
+   * numpy>=1.21.0
+   * pandas>=1.3.0
 
-Dry run complete!
+TIP: Run without --dry-run to actually install packages
 ```
 
 ## Why ZAP?
@@ -149,5 +149,3 @@ Licensed under the Apache License, Version 2.0. See [LICENSE](LICENSE) for detai
 ## Author
 
 Created by Jassem Manita.
-
----
