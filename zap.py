@@ -161,8 +161,7 @@ def install_packages(packages: List[str], dry_run: bool = False) -> tuple:
             print(f"   * {pkg}")
         print("\nTIP: Run without --dry-run to actually install packages")
         logger.info(f"Dry run completed. Would install {to_install_count}")
-        # Return total_packages for both values so dry-run appears "successful"
-        return total_packages, total_packages
+        return total_packages, total_packages  # This makes successful == total
 
     print(f"\nINSTALLING: Installing packages ({to_install_count}):")
     successful = 0
@@ -273,11 +272,7 @@ For more information, visit: https://github.com/jassem-manita/zap
 
         successful, total = install_packages(packages, args.dry_run)
 
-        # Fix the return code logic for dry-run mode
-        if args.dry_run:
-            # Dry run always succeeds if it completes without errors
-            exit_code = 0
-        elif successful == total:
+        if successful == total:
             exit_code = 0
         else:
             exit_code = 1
