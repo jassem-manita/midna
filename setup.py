@@ -7,7 +7,7 @@ setup(
     name="zap",
     version="0.1.0",
     author="Jassem Manita",
-    author_email="jassem.manita@example.com",
+    author_email="jasemmanita00@gmail.com",
     description="Smart pip requirements installer",
     long_description=long_description,
     long_description_content_type="text/markdown",

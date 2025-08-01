@@ -9,7 +9,7 @@ description = "Smart pip requirements installer"
 readme = "README.md"
 license = {text = "Apache-2.0"}
 authors = [
-    {name = "Jassem Manita", email = "jassem.manita@example.com"}
+    {name = "Jassem Manita", email = "jasemmanita00@gmail.com"}
 ]
 classifiers = [
     "Development Status :: 4 - Beta",
