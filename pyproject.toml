@@ -14,18 +14,28 @@ authors = [
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
-    "License :: OSI Approved :: Apache Software License",
-    "Operating System :: OS Independent",
+    "Operating System :: OS Independent", 
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.6",
-    "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
 ]
-requires-python = ">=3.6"
+requires-python = ">=3.8"
 dependencies = []
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=6.0.0",
+    "pytest-cov>=2.10.0", 
+    "black>=21.0.0",
+    "flake8>=3.8.0",
+    "isort>=5.0.0",
+    "mypy>=0.800",
+    "build>=0.7.0",
+    "twine>=3.4.0"
+]
 keywords = ["pip", "requirements", "installer", "package", "management"]
 
 [project.urls]
@@ -34,7 +44,12 @@ Repository = "https://github.com/jassem-manita/zap"
 Issues = "https://github.com/jassem-manita/zap/issues"
 
 [project.scripts]
-zap = "zap:main"
+zap = "src.core:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+
+[tool.setuptools.package-dir]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
@@ -44,7 +59,7 @@ python_functions = ["test_*"]
 addopts = "-v --tb=short"
 
 [tool.coverage.run]
-source = ["zap"]
+source = ["src"]
 omit = ["tests/*"]
 
 [tool.coverage.report]
@@ -61,10 +76,23 @@ exclude_lines = [
 
 [tool.black]
 line-length = 88
-target-version = ['py36']
+target-version = ['py38']
 include = '\.pyi?$'
 
 [tool.isort]
 profile = "black"
 multi_line_output = 3
 line_length = 88
+
+[tool.flake8]
+max-line-length = 88
+extend-ignore = ["E203", "W503"]
+exclude = [
+    ".git",
+    "__pycache__",
+    "build",
+    "dist",
+    ".eggs",
+    "*.egg-info",
+    ".pytest_cache"
+]

@@ -1,151 +1,159 @@
-# ZAP - Python Package Operations
+# ZAP - Smart Python Package Manager
 
-A smarter Python package installer.
+A better way to manage Python dependencies that actually figures out what you need.
 
-> **🚀 Current Status**: ZAP is ready to use! PyPI publication coming soon.
+## What is ZAP?
 
-## Overview
-
-ZAP improves upon `pip install -r requirements.txt` by providing preview functionality, skipping already installed packages, and offering clear progress feedback.
-
-## Features
-
-- **Dry-run mode**: Preview installations before executing
-- **Smart detection**: Skip packages that are already installed
-- **Clear progress**: Readable output with installation summaries  
-- **Error handling**: Continue installing other packages if one fails
-- **Zero configuration**: Works with existing requirements.txt files
-
-## Quick Start
-
-### Install ZAP
+ZAP automatically discovers what packages your Python project uses by scanning your code for imports. No more manually maintaining requirements.txt files or trying to remember what you installed.
 
 ```bash
-# Clone and install locally
+zap                    # Auto-discovers and installs what you need
+zap --dry-run          # See what it would install first
+zap --uninstall        # Remove packages you don't use anymore
+```
+
+## Why I built this
+
+I got tired of:
+- Manually updating requirements.txt files
+- Forgetting what packages I actually need
+- Installing everything when I only need a few packages
+- Requirements files getting out of sync with actual code
+
+ZAP solves this by looking at your actual Python imports and managing packages based on what you're really using.
+
+## Installation
+
+```bash
 git clone https://github.com/jassem-manita/zap.git
 cd zap
 pip install .
 ```
 
-### Basic Usage
+That's it. ZAP is now available globally.
+
+## How to use it
+
+### Auto-discovery (the main feature)
+```bash
+zap                    # Install missing packages
+zap --dry-run          # Preview what would be installed
+zap --uninstall        # Remove unused packages
+zap --verbose          # See what it's doing
+```
+
+### Traditional mode (if you have requirements files)
+```bash
+zap requirements.txt
+zap requirements.txt --dry-run
+```
+
+## How it works
+
+1. **Looks for requirements files first** - requirements.txt, pyproject.toml, setup.py, etc.
+2. **If none found, scans your .py files** for import statements
+3. **Filters out standard library stuff** - only suggests real packages
+4. **Shows you what it found** and what needs to be installed
+5. **Does the installation** (or uninstallation) if you want
+
+## Example output
 
 ```bash
-# Install from requirements.txt (preview first)
-zap --dry-run
+$ zap --dry-run
+Auto-discovering requirements...
+Found 4 packages (import analysis)
 
-# Actually install the packages
-zap
+Already installed (1):
+  + requests
 
-# Install from a custom requirements file
-zap my-packages.txt
+Missing packages (3):
+  - click
+  - numpy  
+  - pandas
+
+DRY RUN: Would install the following packages:
+  - click
+  - numpy
+  - pandas
 ```
 
-## Installation Methods
+## Commands
 
-### Method 1: Install as Command (Recommended)
+```
+zap [requirements_file] [options]
 
+Options:
+  --uninstall, -u    Remove packages instead of installing
+  --dry-run, -n      Show what would happen without doing it
+  --verbose, -v      More detailed output
+  --version          Show version
+  --help, -h         This help message
+```
+
+## Smart features
+
+- **Only installs what's missing** - won't reinstall stuff you already have
+- **Ignores standard library** - won't try to install `os` or `sys`
+- **Skips common directories** - ignores `.git`, `__pycache__`, `.venv`, etc.
+- **Handles multiple file types** - requirements.txt, pyproject.toml, Pipfile
+- **Safe dry-run mode** - always check first
+- **Proper error handling** - won't crash on weird files
+
+## Use cases
+
+**New project setup:**
 ```bash
-# Clone the repository
-git clone https://github.com/jassem-manita/zap.git
-cd zap
-
-# Install ZAP globally
-pip install .
-
-# Now use anywhere
-zap --help
-zap --dry-run
-zap
+git clone some-repo
+cd some-repo
+zap  # installs exactly what the code needs
 ```
 
-### Method 2: Direct Script Usage
-
+**Clean up your environment:**
 ```bash
-# Download just the script
-curl -O https://raw.githubusercontent.com/jassem-manita/zap/main/zap.py
-
-# Run directly
-python zap.py --help
-python zap.py --dry-run
-python zap.py
+zap --uninstall --dry-run  # see what can be removed
+zap --uninstall            # actually remove it
 ```
 
-## Command Line Options
-
-```text
-usage: zap [-h] [--dry-run] [--version] [file]
-
-positional arguments:
-  file        Requirements file to install from (default: requirements.txt)
-
-optional arguments:
-  -h, --help  show this help message and exit
-  --dry-run   See what would be installed without actually doing it
-  --version   show program's version number and exit
-```
-
-## Examples
-
+**Check what your project uses:**
 ```bash
-# Preview what would be installed
-zap --dry-run
-
-# Install everything in requirements.txt
-zap
-
-# Install from a specific file
-zap dev-requirements.txt
-
-# Check version
-zap --version
+zap --dry-run --verbose  # detailed analysis
 ```
 
-## Sample Output
+## Project structure
 
-```text
-ZAP 0.1.0 - Smart Python Package Installer
-Requirements file: requirements.txt
-
-INFO: Requirements Analysis:
-   * Total packages: 3
-   * Already installed: 1
-   * Need installation: 2
-
-OK: Already installed (1):
-   * requests>=2.25.0
-
-DRY RUN MODE - Would install (2):
-   * numpy>=1.21.0
-   * pandas>=1.3.0
-
-TIP: Run without --dry-run to actually install packages
 ```
-
-## Why ZAP?
-
-- **Preview before installing**: See what will happen with `--dry-run`
-- **Skip duplicates**: Won't reinstall packages you already have
-- **Clear progress**: Shows exactly what's happening, not pip's verbose output
-- **Simple**: Just works with your existing requirements.txt files
-- **Fast**: Only installs what you actually need
+src/
+├── core.py          # Main CLI logic
+├── discovery.py     # Auto-discovery engine  
+├── parser.py        # Requirements file parsing
+├── installer.py     # Package installation
+├── uninstaller.py   # Package removal
+├── checker.py       # Check what's installed
+└── logger.py        # Logging
+```
 
 ## Requirements
 
-- Python 3.6+
+- Python 3.8 or newer
 - pip (comes with Python)
+- That's it - no external dependencies
 
-## How It Works
+## Contributing
 
-1. **Reads** your requirements.txt (or specified file)
-2. **Checks** what packages you already have installed
-3. **Shows** you what will be installed (in dry-run mode)
-4. **Installs** only the missing packages
-5. **Reports** success/failure summary
+Found a bug or want to add a feature? 
+
+1. Fork it
+2. Create a branch: `git checkout -b my-feature`
+3. Install dev dependencies: `pip install -e ".[dev]"`
+4. Run tests: `pytest tests/`
+5. Submit a PR
 
 ## License
 
-Licensed under the Apache License, Version 2.0. See [LICENSE](LICENSE) for details.
+Apache 2.0 - see LICENSE file
 
 ## Author
 
-Created by Jassem Manita.
+Jassem Manita  
+GitHub: [@jassem-manita](https://github.com/jassem-manita)  
+Email: jasemmanita00@gmail.com
