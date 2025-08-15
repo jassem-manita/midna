@@ -66,7 +66,7 @@ def main():
             logger.info(f"Using specified file: {args.requirements_file}")
         else:
             # Auto-discovery mode
-            print("🔍 Auto-discovering requirements...")
+            print("Auto-discovering requirements...")
             packages, discovery_method = auto_discover_requirements(".")
             source_info = discovery_method
             logger.info(f"Auto-discovery used: {discovery_method}")
@@ -76,19 +76,19 @@ def main():
                 print("No packages found in requirements file.")
             else:
                 print("No packages discovered in current directory.")
-                print("\nTip: You can:")
-                print("  • Create a requirements.txt file")
-                print("  • Run 'zap <filename>' to specify a file")
-                print("  • Add import statements to your Python files")
+                print("Tip: You can:")
+                print("  - Create a requirements.txt file")
+                print("  - Run 'zap <filename>' to specify a file")
+                print("  - Add import statements to your Python files")
             return 0
             
-        print(f"📦 Found {len(packages)} packages ({source_info})")
+        print(f"Found {len(packages)} packages ({source_info})")
         
         # Show packages that were found
         if args.verbose or not args.requirements_file:
             print("\nDiscovered packages:")
             for package in packages:
-                print(f"  • {package}")
+                print(f"  + {package}")
 
         if args.uninstall:
             # Handle uninstall mode
@@ -115,14 +115,14 @@ def main():
             
             if not_found_packages:
                 print(
-                    f"\n❌ Not installed ({len(not_found_packages)} packages):"
+                    f"\nNot installed ({len(not_found_packages)} packages):"
                 )
                 for package in not_found_packages:
                     print(f"  - {package}")
             if not found_packages:
-                print("\n✅ No packages to uninstall (none are installed)!")
+                print("\nNo packages to uninstall (none are installed)!")
                 return 0
-            print(f"\n🗑️  Will uninstall ({len(found_packages)} packages):")
+            print(f"\nWill uninstall ({len(found_packages)} packages):")
             for package in found_packages:
                 print(f"  - {package}")
             
@@ -148,15 +148,15 @@ def main():
             )
             if already_installed:
                 print(
-                    f"\n✅ Already installed ({len(already_installed)} "
+                    f"\nAlready installed ({len(already_installed)} "
                     f"packages):"
                 )
                 for package in already_installed:
                     print(f"  + {package}")
             if not missing_packages:
-                print("\n🎉 All packages are already installed!")
+                print("\nAll packages are already installed!")
                 return 0
-            print(f"\n⬇️  Will install ({len(missing_packages)} packages):")
+            print(f"\nWill install ({len(missing_packages)} packages):")
             for package in missing_packages:
                 print(f"  - {package}")
             exit_code = install_packages(missing_packages, args.dry_run)

@@ -55,7 +55,7 @@ class TestZapCLI(unittest.TestCase):
 
     def test_zap_version_command(self):
         result = subprocess.run(
-            [sys.executable, "-m", "zap", "--version"],
+            [sys.executable, "-m", "src", "--version"],
             capture_output=True,
             text=True,
         )
@@ -64,7 +64,7 @@ class TestZapCLI(unittest.TestCase):
 
     def test_zap_help_command(self):
         result = subprocess.run(
-            [sys.executable, "-m", "zap", "--help"],
+            [sys.executable, "-m", "src", "--help"],
             capture_output=True,
             text=True,
         )
@@ -83,7 +83,7 @@ class TestZapCLI(unittest.TestCase):
 
         try:
             result = subprocess.run(
-                [sys.executable, "-m", "zap", "--dry-run", temp_path],
+                [sys.executable, "-m", "src", "--dry-run", temp_path],
                 capture_output=True,
                 text=True,
             )
@@ -100,7 +100,7 @@ class TestZapCLI(unittest.TestCase):
 
     def test_zap_nonexistent_file(self):
         result = subprocess.run(
-            [sys.executable, "-m", "zap", "nonexistent.txt"],
+            [sys.executable, "-m", "src", "nonexistent.txt"],
             capture_output=True,
             text=True,
         )
@@ -166,7 +166,7 @@ class TestZapUninstallCLI(unittest.TestCase):
     def test_zap_uninstall_help(self):
         """Test that uninstall option appears in help."""
         result = subprocess.run(
-            [sys.executable, "-m", "zap", "--help"],
+            [sys.executable, "-m", "src", "--help"],
             capture_output=True,
             text=True,
         )
@@ -190,7 +190,7 @@ class TestZapUninstallCLI(unittest.TestCase):
                 [
                     sys.executable,
                     "-m",
-                    "zap",
+                    "src",
                     "--uninstall",
                     "--dry-run",
                     temp_path,
@@ -212,7 +212,7 @@ class TestZapUninstallCLI(unittest.TestCase):
     def test_zap_uninstall_nonexistent_file(self):
         """Test uninstall command with nonexistent file."""
         result = subprocess.run(
-            [sys.executable, "-m", "zap", "--uninstall", "nonexistent.txt"],
+            [sys.executable, "-m", "src", "--uninstall", "nonexistent.txt"],
             capture_output=True,
             text=True,
         )
