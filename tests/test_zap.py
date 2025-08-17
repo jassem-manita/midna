@@ -60,7 +60,7 @@ class TestZapCLI(unittest.TestCase):
             text=True,
         )
         self.assertEqual(result.returncode, 0)
-        self.assertIn("0.1.0", result.stdout)
+        self.assertIn("1.0.0", result.stdout)
 
     def test_zap_help_command(self):
         result = subprocess.run(
