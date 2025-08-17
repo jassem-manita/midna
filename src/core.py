@@ -1,6 +1,6 @@
 """Main CLI interface for ZAP"""
 
-import argparse
+from argparse import ArgumentParser, RawDescriptionHelpFormatter
 import sys
 
 from .checker import check_installed_packages
@@ -11,9 +11,9 @@ from .parser import read_requirements
 from .discovery import auto_discover_requirements
 
 
-def create_parser():
+def create_parser() -> ArgumentParser:
     """Create and configure the argument parser"""
-    parser = argparse.ArgumentParser(
+    parser = ArgumentParser(
         description="ZAP - Smart pip requirements installer",
         epilog=(
             "Examples:\n"
@@ -22,7 +22,7 @@ def create_parser():
             "  zap --dry-run          # Preview auto-discovered packages\n"
             "  zap file.txt --dry-run # Preview specific file packages"
         ),
-        formatter_class=argparse.RawDescriptionHelpFormatter,
+        formatter_class=RawDescriptionHelpFormatter,
     )
     parser.add_argument(
         "requirements_file",
@@ -50,7 +50,7 @@ def create_parser():
     return parser
 
 
-def main():
+def main() -> int:
     """Main entry point for ZAP"""
     parser = create_parser()
     args = parser.parse_args()

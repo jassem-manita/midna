@@ -44,3 +44,6 @@ jobs:
 
       - name: Run linting
         run: flake8 src/ tests/
+
+      - name: Run type checking
+        run: mypy src/ tests/
