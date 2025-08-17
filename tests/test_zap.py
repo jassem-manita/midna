@@ -4,7 +4,7 @@ import tempfile
 import os
 import sys
 import subprocess
-from src import parser, checker, uninstaller
+from wamya import parser, checker, uninstaller
 
 
 class TestZapFunctionality(unittest.TestCase):
@@ -55,7 +55,7 @@ class TestZapCLI(unittest.TestCase):
 
     def test_zap_version_command(self) -> None:
         result = subprocess.run(
-            [sys.executable, "-m", "src", "--version"],
+            [sys.executable, "-m", "wamya", "--version"],
             capture_output=True,
             text=True,
         )
@@ -64,7 +64,7 @@ class TestZapCLI(unittest.TestCase):
 
     def test_zap_help_command(self) -> None:
         result = subprocess.run(
-            [sys.executable, "-m", "src", "--help"],
+            [sys.executable, "-m", "wamya", "--help"],
             capture_output=True,
             text=True,
         )
@@ -83,7 +83,7 @@ class TestZapCLI(unittest.TestCase):
 
         try:
             result = subprocess.run(
-                [sys.executable, "-m", "src", "--dry-run", temp_path],
+                [sys.executable, "-m", "wamya", "--dry-run", temp_path],
                 capture_output=True,
                 text=True,
             )
@@ -166,7 +166,7 @@ class TestZapUninstallCLI(unittest.TestCase):
     def test_zap_uninstall_help(self) -> None:
         """Test that uninstall option appears in help."""
         result = subprocess.run(
-            [sys.executable, "-m", "src", "--help"],
+            [sys.executable, "-m", "wamya", "--help"],
             capture_output=True,
             text=True,
         )
@@ -190,7 +190,7 @@ class TestZapUninstallCLI(unittest.TestCase):
                 [
                     sys.executable,
                     "-m",
-                    "src",
+                    "wamya",
                     "--uninstall",
                     "--dry-run",
                     temp_path,
@@ -212,7 +212,7 @@ class TestZapUninstallCLI(unittest.TestCase):
     def test_zap_uninstall_nonexistent_file(self) -> None:
         """Test uninstall command with nonexistent file."""
         result = subprocess.run(
-            [sys.executable, "-m", "src", "--uninstall", "nonexistent.txt"],
+            [sys.executable, "-m", "wamya", "--uninstall", "nonexistent.txt"],
             capture_output=True,
             text=True,
         )
