@@ -32,22 +32,22 @@ jobs:
           mypy --version
 
       - name: Test package installation
-        run: zap --version
+        run: wamya --version
 
       - name: Run tests
         run: pytest tests/ -v
 
       - name: Test CLI functionality
         run: |
-          zap --help
+          wamya --help
           echo "requests>=2.25.0" > test_requirements.txt
-          zap --dry-run test_requirements.txt
+          wamya --dry-run test_requirements.txt
 
       - name: Check code formatting
-        run: black --check src/
+        run: black --check wamya/
 
       - name: Run linting
-        run: flake8 src/ tests/
+        run: flake8 wamya/ tests/
 
       - name: Run type checking
         run: mypy src/ tests/
