@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "wamya"
-version = "1.0.0"
+version = "1.0.1"
 description = "Smart pip requirements installer"
 readme = "README.md"
 license = {text = "Apache-2.0"}
@@ -44,7 +44,7 @@ Repository = "https://github.com/jassem-manita/wamya"
 Issues = "https://github.com/jassem-manita/wamya/issues"
 
 [project.scripts]
-wamya = "src.core:main"
+wamya = "wamya.core:main"
 
 [tool.setuptools.packages.find]
 where = ["."]
