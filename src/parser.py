@@ -44,9 +44,11 @@ def read_requirements(file_path: str) -> List[str]:
                 packages.extend(included_packages)
             except FileNotFoundError:
                 logger.warning(f"Included file not found: {include_file}")
-                print(
-                    f"WARNING: Included requirements file not found: {include_file}"
+                msg = (
+                    f"WARNING: Included requirements file not found: "
+                    f"{include_file}"
                 )
+                print(msg)
             continue
 
         # Skip other pip options

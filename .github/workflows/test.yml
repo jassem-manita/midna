@@ -26,6 +26,10 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -e ".[dev]"
+          pip freeze
+          black --version
+          flake8 --version
+          mypy --version
 
       - name: Test package installation
         run: zap --version
