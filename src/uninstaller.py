@@ -37,9 +37,7 @@ def _uninstall_package_list(packages: List[str], dry_run: bool = False) -> int:
         for package in packages:
             package_name = parse_package_name(package)
             print(f"  - {package_name}")
-        logger.info(
-            f"Dry run completed. Would uninstall {len(packages)} packages"
-        )
+        logger.info(f"Dry run completed. Would uninstall {len(packages)} packages")
         return 0
 
     print(f"Uninstalling {len(packages)} packages...")

@@ -27,7 +27,7 @@ def create_parser():
     parser.add_argument(
         "requirements_file",
         nargs="?",
-        help="Path to requirements.txt file (optional - will auto-discover)"
+        help="Path to requirements.txt file (optional - will auto-discover)",
     )
     parser.add_argument(
         "--uninstall",
@@ -44,9 +44,7 @@ def create_parser():
     parser.add_argument(
         "--verbose", "-v", action="store_true", help="Enable verbose output"
     )
-    parser.add_argument(
-        "--version", action="version", version="%(prog)s 0.1.0"
-    )
+    parser.add_argument("--version", action="version", version="%(prog)s 0.1.0")
     return parser
 
 
@@ -70,7 +68,7 @@ def main():
             packages, discovery_method = auto_discover_requirements(".")
             source_info = discovery_method
             logger.info(f"Auto-discovery used: {discovery_method}")
-        
+
         if not packages:
             if args.requirements_file:
                 print("No packages found in requirements file.")
@@ -81,9 +79,9 @@ def main():
                 print("  - Run 'zap <filename>' to specify a file")
                 print("  - Add import statements to your Python files")
             return 0
-            
+
         print(f"Found {len(packages)} packages ({source_info})")
-        
+
         # Show packages that were found
         if args.verbose or not args.requirements_file:
             print("\nDiscovered packages:")
@@ -93,30 +91,30 @@ def main():
         if args.uninstall:
             # Handle uninstall mode
             if args.requirements_file:
-                found_packages, not_found_packages = (
-                    check_packages_to_uninstall(args.requirements_file)
+                found_packages, not_found_packages = check_packages_to_uninstall(
+                    args.requirements_file
                 )
             else:
                 # For auto-discovered packages, create temp file
                 import tempfile
+
                 with tempfile.NamedTemporaryFile(
-                    mode='w', suffix='.txt', delete=False
+                    mode="w", suffix=".txt", delete=False
                 ) as temp_file:
-                    temp_file.write('\n'.join(packages))
+                    temp_file.write("\n".join(packages))
                     temp_path = temp_file.name
-                
+
                 try:
-                    found_packages, not_found_packages = (
-                        check_packages_to_uninstall(temp_path)
+                    found_packages, not_found_packages = check_packages_to_uninstall(
+                        temp_path
                     )
                 finally:
                     import os
+
                     os.unlink(temp_path)
-            
+
             if not_found_packages:
-                print(
-                    f"\nNot installed ({len(not_found_packages)} packages):"
-                )
+                print(f"\nNot installed ({len(not_found_packages)} packages):")
                 for package in not_found_packages:
                     print(f"  - {package}")
             if not found_packages:
@@ -125,32 +123,29 @@ def main():
             print(f"\nWill uninstall ({len(found_packages)} packages):")
             for package in found_packages:
                 print(f"  - {package}")
-            
+
             # Create temp file for uninstaller
             import tempfile
+
             with tempfile.NamedTemporaryFile(
-                mode='w', suffix='.txt', delete=False
+                mode="w", suffix=".txt", delete=False
             ) as temp_file:
-                temp_file.write('\n'.join(found_packages))
+                temp_file.write("\n".join(found_packages))
                 temp_path = temp_file.name
-            
+
             try:
                 exit_code = uninstall_packages(temp_path, args.dry_run)
             finally:
                 import os
+
                 os.unlink(temp_path)
-            
+
             return exit_code
         else:
             # Handle install mode
-            missing_packages, already_installed = check_installed_packages(
-                packages
-            )
+            missing_packages, already_installed = check_installed_packages(packages)
             if already_installed:
-                print(
-                    f"\nAlready installed ({len(already_installed)} "
-                    f"packages):"
-                )
+                print(f"\nAlready installed ({len(already_installed)} " f"packages):")
                 for package in already_installed:
                     print(f"  + {package}")
             if not missing_packages:
@@ -161,7 +156,7 @@ def main():
                 print(f"  - {package}")
             exit_code = install_packages(missing_packages, args.dry_run)
             return exit_code
-            
+
     except FileNotFoundError as e:
         print(f"ERROR: {e}")
         return 1
