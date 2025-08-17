@@ -44,7 +44,7 @@ def find_requirements_files(directory: str = ".") -> List[str]:
 def extract_imports_from_file(file_path: str) -> Set[str]:
     """Extract import statements from a Python file"""
     logger = logging.getLogger("zap")
-    imports = set()
+    imports: Set[str] = set()
 
     try:
         with open(file_path, "r", encoding="utf-8") as f:

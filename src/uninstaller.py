@@ -2,7 +2,7 @@
 
 import logging
 import subprocess
-from typing import List
+from typing import List, Tuple
 
 from .parser import parse_package_name, read_requirements
 
@@ -71,7 +71,7 @@ def _uninstall_package_list(packages: List[str], dry_run: bool = False) -> int:
 
 def check_packages_to_uninstall(
     requirements_file: str,
-) -> tuple[List[str], List[str]]:
+) -> Tuple[List[str], List[str]]:
     """Check which packages from a requirements file are installed."""
     logger = logging.getLogger("zap")
     logger.info("Checking packages for uninstallation...")
@@ -87,7 +87,7 @@ def check_packages_to_uninstall(
 
 def _check_package_list_to_uninstall(
     packages: List[str],
-) -> tuple[List[str], List[str]]:
+) -> Tuple[List[str], List[str]]:
     """Check which packages in a list are installed."""
     logger = logging.getLogger("zap")
 
