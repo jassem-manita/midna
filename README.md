@@ -1,15 +1,15 @@
-# ZAP - Smart Python Package Manager
+# WAMYA - Smart Python Package Manager
 
 A better way to manage Python dependencies that actually figures out what you need.
 
-## What is ZAP?
+## What is WAMYA?
 
-ZAP automatically discovers what packages your Python project uses by scanning your code for imports. No more manually maintaining requirements.txt files or trying to remember what you installed.
+WAMYA automatically discovers what packages your Python project uses by scanning your code for imports. No more manually maintaining requirements.txt files or trying to remember what you installed.
 
 ```bash
-zap                    # Auto-discovers and installs what you need
-zap --dry-run          # See what it would install first
-zap --uninstall        # Remove packages you don't use anymore
+wamya                    # Auto-discovers and installs what you need
+wamya --dry-run          # See what it would install first
+wamya --uninstall        # Remove packages you don't use anymore
 ```
 
 ## Why I built this
@@ -25,27 +25,27 @@ ZAP solves this by looking at your actual Python imports and managing packages b
 ## Installation
 
 ```bash
-git clone https://github.com/jassem-manita/zap.git
-cd zap
+git clone https://github.com/jassem-manita/wamya.git
+cd wamya
 pip install .
 ```
 
-That's it. ZAP is now available globally.
+That's it. WAMYA is now available globally.
 
 ## How to use it
 
 ### Auto-discovery (the main feature)
 ```bash
-zap                    # Install missing packages
-zap --dry-run          # Preview what would be installed
-zap --uninstall        # Remove unused packages
-zap --verbose          # See what it's doing
+wamya                    # Install missing packages
+wamya --dry-run          # Preview what would be installed
+wamya --uninstall        # Remove unused packages
+wamya --verbose          # See what it's doing
 ```
 
 ### Traditional mode (if you have requirements files)
 ```bash
-zap requirements.txt
-zap requirements.txt --dry-run
+wamya requirements.txt
+wamya requirements.txt --dry-run
 ```
 
 ## How it works

@@ -3,7 +3,7 @@ requires = ["setuptools>=45", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "zap"
+name = "wamya"
 version = "1.0.0"
 description = "Smart pip requirements installer"
 readme = "README.md"
@@ -39,12 +39,12 @@ dev = [
 keywords = ["pip", "requirements", "installer", "package", "management"]
 
 [project.urls]
-Homepage = "https://github.com/jassem-manita/zap"
-Repository = "https://github.com/jassem-manita/zap"
-Issues = "https://github.com/jassem-manita/zap/issues"
+Homepage = "https://github.com/jassem-manita/wamya"
+Repository = "https://github.com/jassem-manita/wamya"
+Issues = "https://github.com/jassem-manita/wamya/issues"
 
 [project.scripts]
-zap = "src.core:main"
+wamya = "src.core:main"
 
 [tool.setuptools.packages.find]
 where = ["."]
