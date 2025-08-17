@@ -44,7 +44,9 @@ def create_parser():
     parser.add_argument(
         "--verbose", "-v", action="store_true", help="Enable verbose output"
     )
-    parser.add_argument("--version", action="version", version="%(prog)s 1.0.0")
+    parser.add_argument(
+        "--version", action="version", version="%(prog)s 1.0.0"
+    )
     return parser
 
 
@@ -91,8 +93,8 @@ def main():
         if args.uninstall:
             # Handle uninstall mode
             if args.requirements_file:
-                found_packages, not_found_packages = check_packages_to_uninstall(
-                    args.requirements_file
+                found_packages, not_found_packages = (
+                    check_packages_to_uninstall(args.requirements_file)
                 )
             else:
                 # For auto-discovered packages, create temp file
@@ -105,8 +107,8 @@ def main():
                     temp_path = temp_file.name
 
                 try:
-                    found_packages, not_found_packages = check_packages_to_uninstall(
-                        temp_path
+                    found_packages, not_found_packages = (
+                        check_packages_to_uninstall(temp_path)
                     )
                 finally:
                     import os
@@ -143,9 +145,14 @@ def main():
             return exit_code
         else:
             # Handle install mode
-            missing_packages, already_installed = check_installed_packages(packages)
+            missing_packages, already_installed = check_installed_packages(
+                packages
+            )
             if already_installed:
-                print(f"\nAlready installed ({len(already_installed)} " f"packages):")
+                print(
+                    f"\nAlready installed ({len(already_installed)} "
+                    f"packages):"
+                )
                 for package in already_installed:
                     print(f"  + {package}")
             if not missing_packages:

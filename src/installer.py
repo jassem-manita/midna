@@ -18,7 +18,9 @@ def install_packages(packages: List[str], dry_run: bool = False) -> int:
         print("DRY RUN: Would install the following packages:")
         for package in packages:
             print(f"  - {package}")
-        logger.info(f"Dry run completed. Would install {len(packages)} packages")
+        logger.info(
+            f"Dry run completed. Would install {len(packages)} packages"
+        )
         return 0
 
     print(f"Installing {len(packages)} packages...")

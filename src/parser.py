@@ -34,7 +34,9 @@ def read_requirements(file_path: str) -> List[str]:
             include_file = line[3:].strip()
             if not os.path.isabs(include_file):
                 # Make relative path relative to current requirements file
-                include_file = os.path.join(os.path.dirname(file_path), include_file)
+                include_file = os.path.join(
+                    os.path.dirname(file_path), include_file
+                )
 
             logger.info(f"Found include: {include_file}")
             try:
@@ -42,7 +44,9 @@ def read_requirements(file_path: str) -> List[str]:
                 packages.extend(included_packages)
             except FileNotFoundError:
                 logger.warning(f"Included file not found: {include_file}")
-                print(f"WARNING: Included requirements file not found: {include_file}")
+                print(
+                    f"WARNING: Included requirements file not found: {include_file}"
+                )
             continue
 
         # Skip other pip options

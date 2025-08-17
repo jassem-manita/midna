@@ -125,7 +125,9 @@ def analyze_project_imports(directory: str = ".") -> Set[str]:
     # Filter out standard library modules
     filtered_imports = filter_standard_library(all_imports)
 
-    logger.info(f"Found {len(filtered_imports)} potential third-party packages")
+    logger.info(
+        f"Found {len(filtered_imports)} potential third-party packages"
+    )
     return filtered_imports
 
 
@@ -214,7 +216,9 @@ def filter_standard_library(imports: Set[str]) -> Set[str]:
     }
 
     return {
-        imp for imp in imports if imp not in stdlib_modules and not imp.startswith("_")
+        imp
+        for imp in imports
+        if imp not in stdlib_modules and not imp.startswith("_")
     }
 
 
@@ -277,7 +281,9 @@ def get_discovery_mode_choice() -> str:
 
     while True:
         try:
-            choice = input("\nSelect discovery mode (1-3, default=3): ").strip()
+            choice = input(
+                "\nSelect discovery mode (1-3, default=3): "
+            ).strip()
             if choice == "" or choice == "3":
                 return "both"
             elif choice == "1":
