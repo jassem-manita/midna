@@ -20,14 +20,12 @@ I got tired of:
 - Installing everything when I only need a few packages
 - Requirements files getting out of sync with actual code
 
-ZAP solves this by looking at your actual Python imports and managing packages based on what you're really using.
+WAMYA solves this by looking at your actual Python imports and managing packages based on what you're really using.
 
 ## Installation
 
 ```bash
-git clone https://github.com/jassem-manita/wamya.git
-cd wamya
-pip install .
+pip install wamya
 ```
 
 That's it. WAMYA is now available globally.
@@ -59,7 +57,7 @@ wamya requirements.txt --dry-run
 ## Example output
 
 ```bash
-$ zap --dry-run
+$ wamya --dry-run
 Auto-discovering requirements...
 Found 4 packages (import analysis)
 
@@ -79,8 +77,8 @@ DRY RUN: Would install the following packages:
 
 ## Commands
 
-```
-zap [requirements_file] [options]
+```bash
+wamya [requirements_file] [options]
 
 Options:
   --uninstall, -u    Remove packages instead of installing
@@ -105,24 +103,24 @@ Options:
 ```bash
 git clone some-repo
 cd some-repo
-zap  # installs exactly what the code needs
+wamya  # installs exactly what the code needs
 ```
 
 **Clean up your environment:**
 ```bash
-zap --uninstall --dry-run  # see what can be removed
-zap --uninstall            # actually remove it
+wamya --uninstall --dry-run  # see what can be removed
+wamya --uninstall            # actually remove it
 ```
 
 **Check what your project uses:**
 ```bash
-zap --dry-run --verbose  # detailed analysis
+wamya --dry-run --verbose  # detailed analysis
 ```
 
 ## Project structure
 
-```
-src/
+```text
+wamya/
 ├── core.py          # Main CLI logic
 ├── discovery.py     # Auto-discovery engine  
 ├── parser.py        # Requirements file parsing
@@ -156,4 +154,4 @@ Apache 2.0 - see LICENSE file
 
 Jassem Manita  
 GitHub: [@jassem-manita](https://github.com/jassem-manita)  
-Email: jasemmanita00@gmail.com
+Email: [jasemmanita00@gmail.com](mailto:jasemmanita00@gmail.com)
