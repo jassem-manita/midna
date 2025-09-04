@@ -71,7 +71,7 @@ class TestMidnaCLI(unittest.TestCase):
         self.assertEqual(result.returncode, 0)
         self.assertIn("usage:", result.stdout.lower())
 
-    def test_zap_dry_run_with_sample_file(self) -> None:
+    def test_midna_dry_run_with_sample_file(self) -> None:
         with tempfile.NamedTemporaryFile(
             mode="w", suffix=".txt", delete=False
         ) as f:
@@ -83,7 +83,7 @@ class TestMidnaCLI(unittest.TestCase):
 
         try:
             result = subprocess.run(
-                [sys.executable, "-m", "piko", "--dry-run", temp_path],
+                [sys.executable, "-m", "midna", "--dry-run", temp_path],
                 capture_output=True,
                 text=True,
             )
@@ -98,9 +98,9 @@ class TestMidnaCLI(unittest.TestCase):
             except (OSError, PermissionError):
                 pass
 
-    def test_zap_nonexistent_file(self) -> None:
+    def test_midna_nonexistent_file(self) -> None:
         result = subprocess.run(
-            [sys.executable, "-m", "src", "nonexistent.txt"],
+            [sys.executable, "-m", "midna", "nonexistent.txt"],
             capture_output=True,
             text=True,
         )
@@ -163,10 +163,10 @@ class TestMidnaUninstaller(unittest.TestCase):
 
 class TestMidnaUninstallCLI(unittest.TestCase):
 
-    def test_zap_uninstall_help(self) -> None:
+    def test_midna_uninstall_help(self) -> None:
         """Test that uninstall option appears in help."""
         result = subprocess.run(
-            [sys.executable, "-m", "piko", "--help"],
+            [sys.executable, "-m", "midna", "--help"],
             capture_output=True,
             text=True,
         )
@@ -174,7 +174,7 @@ class TestMidnaUninstallCLI(unittest.TestCase):
         self.assertIn("--uninstall", result.stdout)
         self.assertIn("-u", result.stdout)
 
-    def test_zap_uninstall_dry_run_with_sample_file(self) -> None:
+    def test_midna_uninstall_dry_run_with_sample_file(self) -> None:
         """Test uninstall command with dry run flag."""
         with tempfile.NamedTemporaryFile(
             mode="w", suffix=".txt", delete=False, encoding="utf-8"
@@ -190,7 +190,7 @@ class TestMidnaUninstallCLI(unittest.TestCase):
                 [
                     sys.executable,
                     "-m",
-                    "piko",
+                    "midna",
                     "--uninstall",
                     "--dry-run",
                     temp_path,
