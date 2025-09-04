@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""ZAP CLI entry point"""
+"""Midna CLI entry point"""
 
 import sys
 from .core import main

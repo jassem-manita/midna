@@ -4,10 +4,10 @@ import tempfile
 import os
 import sys
 import subprocess
-from wamya import parser, checker, uninstaller
+from midna import parser, checker, uninstaller
 
 
-class TestZapFunctionality(unittest.TestCase):
+class TestMidnaFunctionality(unittest.TestCase):
 
     def test_read_requirements_valid_file(self) -> None:
         with tempfile.NamedTemporaryFile(
@@ -51,20 +51,20 @@ class TestZapFunctionality(unittest.TestCase):
         self.assertIsInstance(installed, list)
 
 
-class TestZapCLI(unittest.TestCase):
+class TestMidnaCLI(unittest.TestCase):
 
-    def test_zap_version_command(self) -> None:
+    def test_midna_version_command(self) -> None:
         result = subprocess.run(
-            [sys.executable, "-m", "wamya", "--version"],
+            [sys.executable, "-m", "midna", "--version"],
             capture_output=True,
             text=True,
         )
         self.assertEqual(result.returncode, 0)
         self.assertIn("1.0.0", result.stdout)
 
-    def test_zap_help_command(self) -> None:
+    def test_midna_help_command(self) -> None:
         result = subprocess.run(
-            [sys.executable, "-m", "wamya", "--help"],
+            [sys.executable, "-m", "midna", "--help"],
             capture_output=True,
             text=True,
         )
@@ -83,7 +83,7 @@ class TestZapCLI(unittest.TestCase):
 
         try:
             result = subprocess.run(
-                [sys.executable, "-m", "wamya", "--dry-run", temp_path],
+                [sys.executable, "-m", "piko", "--dry-run", temp_path],
                 capture_output=True,
                 text=True,
             )
@@ -107,7 +107,7 @@ class TestZapCLI(unittest.TestCase):
         self.assertNotEqual(result.returncode, 0)
 
 
-class TestZapUninstaller(unittest.TestCase):
+class TestMidnaUninstaller(unittest.TestCase):
 
     def test_check_packages_to_uninstall_with_valid_file(self) -> None:
         """Test checking packages to uninstall with valid file."""
@@ -161,12 +161,12 @@ class TestZapUninstaller(unittest.TestCase):
                 pass
 
 
-class TestZapUninstallCLI(unittest.TestCase):
+class TestMidnaUninstallCLI(unittest.TestCase):
 
     def test_zap_uninstall_help(self) -> None:
         """Test that uninstall option appears in help."""
         result = subprocess.run(
-            [sys.executable, "-m", "wamya", "--help"],
+            [sys.executable, "-m", "piko", "--help"],
             capture_output=True,
             text=True,
         )
@@ -190,7 +190,7 @@ class TestZapUninstallCLI(unittest.TestCase):
                 [
                     sys.executable,
                     "-m",
-                    "wamya",
+                    "piko",
                     "--uninstall",
                     "--dry-run",
                     temp_path,
@@ -212,7 +212,7 @@ class TestZapUninstallCLI(unittest.TestCase):
     def test_zap_uninstall_nonexistent_file(self) -> None:
         """Test uninstall command with nonexistent file."""
         result = subprocess.run(
-            [sys.executable, "-m", "wamya", "--uninstall", "nonexistent.txt"],
+            [sys.executable, "-m", "piko", "--uninstall", "nonexistent.txt"],
             capture_output=True,
             text=True,
         )

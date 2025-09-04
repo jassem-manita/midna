@@ -1,49 +1,54 @@
-# WAMYA - Smart Python Package Manager
+# Midna - The Smart Python Package Assistant
 
-A better way to manage Python dependencies that actually figures out what you need.
+An intelligent tool that automatically manages your Python dependencies by analyzing your actual code usage.
 
-## What is WAMYA?
+## What is Midna?
 
-WAMYA automatically discovers what packages your Python project uses by scanning your code for imports. No more manually maintaining requirements.txt files or trying to remember what you installed.
+Midna - The smart Python package assistant that automatically discovers what packages your Python project uses by scanning your code for imports. No more manually maintaining requirements.txt files or trying to remember what you installed.
 
 ```bash
-wamya                    # Auto-discovers and installs what you need
-wamya --dry-run          # See what it would install first
-wamya --uninstall        # Remove packages you don't use anymore
+midna                    # Auto-discovers and installs what you need
+midna --dry-run          # See what it would install first
+midna --uninstall        # Remove packages you don't use anymore
 ```
 
-## Why I built this
+## Why Midna exists
 
-I got tired of:
-- Manually updating requirements.txt files
-- Forgetting what packages I actually need
-- Installing everything when I only need a few packages
-- Requirements files getting out of sync with actual code
+Common Python package management challenges:
 
-WAMYA solves this by looking at your actual Python imports and managing packages based on what you're really using.
+- Manual maintenance of requirements.txt files
+- Difficulty tracking essential package dependencies
+- Unnecessary installation of unused packages
+- Inconsistencies between requirements and actual code usage
+
+Midna addresses these challenges through intelligent code analysis and automated dependency management, ensuring your project only includes the packages it actually needs.
 
 ## Installation
 
+Simply run:
+
 ```bash
-pip install wamya
+pip install midna
 ```
 
-That's it. WAMYA is now available globally.
+Once installed, Midna is available system-wide and ready to optimize your Python package management.
 
 ## How to use it
 
 ### Auto-discovery (the main feature)
+
 ```bash
-wamya                    # Install missing packages
-wamya --dry-run          # Preview what would be installed
-wamya --uninstall        # Remove unused packages
-wamya --verbose          # See what it's doing
+midna                    # Install missing packages
+midna --dry-run          # Preview what would be installed
+midna --uninstall        # Remove unused packages
+midna --verbose          # See what it's doing
 ```
 
 ### Traditional mode (if you have requirements files)
+
 ```bash
-wamya requirements.txt
-wamya requirements.txt --dry-run
+midna requirements.txt
+midna requirements.txt --dry-run
 ```
 
 ## How it works
@@ -57,7 +62,7 @@ wamya requirements.txt --dry-run
 ## Example output
 
 ```bash
-$ wamya --dry-run
+$ midna --dry-run
 Auto-discovering requirements...
 Found 4 packages (import analysis)
 
@@ -78,7 +83,7 @@ DRY RUN: Would install the following packages:
 ## Commands
 
 ```bash
-wamya [requirements_file] [options]
+midna [requirements_file] [options]
 
 Options:
   --uninstall, -u    Remove packages instead of installing
@@ -88,39 +93,42 @@ Options:
   --help, -h         This help message
 ```
 
-## Smart features
+## Key Features
 
-- **Only installs what's missing** - won't reinstall stuff you already have
-- **Ignores standard library** - won't try to install `os` or `sys`
-- **Skips common directories** - ignores `.git`, `__pycache__`, `.venv`, etc.
-- **Handles multiple file types** - requirements.txt, pyproject.toml, Pipfile
-- **Safe dry-run mode** - always check first
-- **Proper error handling** - won't crash on weird files
+- **Intelligent Package Detection** - Installs only required dependencies
+- **Standard Library Awareness** - Automatically excludes built-in Python modules
+- **Smart Directory Filtering** - Ignores non-project directories (`.git`, `__pycache__`, `.venv`)
+- **Multi-Format Support** - Compatible with requirements.txt, pyproject.toml, and Pipfile
+- **Safe Execution** - Provides dry-run mode for verification
+- **Robust Error Handling** - Ensures reliable operation across diverse codebases
 
 ## Use cases
 
 **New project setup:**
+
 ```bash
 git clone some-repo
 cd some-repo
-wamya  # installs exactly what the code needs
+midna  # installs exactly what the code needs
 ```
 
 **Clean up your environment:**
+
 ```bash
-wamya --uninstall --dry-run  # see what can be removed
-wamya --uninstall            # actually remove it
+midna --uninstall --dry-run  # see what can be removed
+midna --uninstall            # actually remove it
 ```
 
 **Check what your project uses:**
+
 ```bash
-wamya --dry-run --verbose  # detailed analysis
+midna --dry-run --verbose  # detailed analysis
 ```
 
 ## Project structure
 
 ```text
-wamya/
+midna/
 ├── core.py          # Main CLI logic
 ├── discovery.py     # Auto-discovery engine  
 ├── parser.py        # Requirements file parsing
@@ -138,7 +146,7 @@ wamya/
 
 ## Contributing
 
-Found a bug or want to add a feature? 
+Found a bug or want to add a feature?
 
 1. Fork it
 2. Create a branch: `git checkout -b my-feature`

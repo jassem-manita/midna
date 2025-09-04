@@ -3,9 +3,9 @@ requires = ["setuptools>=45", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "wamya"
+name = "midna"
 version = "1.0.1"
-description = "Smart pip requirements installer"
+description = "Smart pip requirements installer - Midna manages your installations"
 readme = "README.md"
 license = {text = "Apache-2.0"}
 authors = [
@@ -39,12 +39,12 @@ dev = [
 keywords = ["pip", "requirements", "installer", "package", "management"]
 
 [project.urls]
-Homepage = "https://github.com/jassem-manita/wamya"
-Repository = "https://github.com/jassem-manita/wamya"
-Issues = "https://github.com/jassem-manita/wamya/issues"
+Homepage = "https://github.com/jassem-manita/midna"
+Repository = "https://github.com/jassem-manita/midna"
+Issues = "https://github.com/jassem-manita/midna/issues"
 
 [project.scripts]
-wamya = "wamya.core:main"
+midna = "midna.core:main"
 
 [tool.setuptools.packages.find]
 where = ["."]
