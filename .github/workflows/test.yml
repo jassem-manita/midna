@@ -50,4 +50,4 @@ jobs:
         run: flake8 midna/ tests/
 
       - name: Run type checking
-        run: mypy src/ tests/
+        run: mypy midna/ tests/
