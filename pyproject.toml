@@ -59,8 +59,8 @@ python_functions = ["test_*"]
 addopts = "-v --tb=short"
 
 [tool.coverage.run]
-source = ["src"]
-omit = ["tests/*"]
+source = ["."]
+omit = ["tests/*", "setup.py"]
 
 [tool.coverage.report]
 exclude_lines = [
