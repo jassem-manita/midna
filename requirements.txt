@@ -1,0 +1,4 @@
+# Core dependencies
+pip>=21.0
+setuptools>=45.0
+wheel>=0.37.0
