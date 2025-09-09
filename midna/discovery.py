@@ -1,4 +1,4 @@
-"""Auto-discovery for ZAP - find requirements automatically"""
+"""Auto-discovery for Midna - find requirements automatically"""
 
 import ast
 import logging
@@ -9,7 +9,7 @@ from typing import List, Set, Tuple
 
 def find_requirements_files(directory: str = ".") -> List[str]:
     """Find requirements files in the given directory"""
-    logger = logging.getLogger("zap")
+    logger = logging.getLogger("midna")
 
     # Common requirements file patterns
     patterns = [
@@ -43,7 +43,7 @@ def find_requirements_files(directory: str = ".") -> List[str]:
 
 def extract_imports_from_file(file_path: str) -> Set[str]:
     """Extract import statements from a Python file"""
-    logger = logging.getLogger("zap")
+    logger = logging.getLogger("midna")
     imports: Set[str] = set()
 
     try:
@@ -108,7 +108,7 @@ def find_python_files(directory: str = ".") -> List[str]:
 
 def analyze_project_imports(directory: str = ".") -> Set[str]:
     """Analyze all Python files in project to find imported packages"""
-    logger = logging.getLogger("zap")
+    logger = logging.getLogger("midna")
     logger.info(f"Analyzing Python files in: {directory}")
 
     all_imports = set()
@@ -229,7 +229,7 @@ def auto_discover_requirements(directory: str = ".") -> Tuple[List[str], str]:
     Returns:
         Tuple of (packages_list, discovery_method)
     """
-    logger = logging.getLogger("zap")
+    logger = logging.getLogger("midna")
     logger.info("Starting auto-discovery of requirements...")
 
     # Strategy 1: Look for existing requirements files
@@ -274,7 +274,7 @@ def auto_discover_requirements(directory: str = ".") -> Tuple[List[str], str]:
 
 def get_discovery_mode_choice() -> str:
     """Ask user which discovery mode to use"""
-    print("\nZAP Auto-Discovery Options:")
+    print("\nMidna Auto-Discovery Options:")
     print("1. Search for requirements files (requirements.txt, etc.)")
     print("2. Analyze Python files for imported packages")
     print("3. Both (requirements files first, then import analysis)")

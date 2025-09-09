@@ -1,4 +1,4 @@
-"""Requirements file parser for ZAP"""
+"""Requirements file parser for Midna"""
 
 import logging
 import os
@@ -7,7 +7,7 @@ from typing import List
 
 def read_requirements(file_path: str) -> List[str]:
     """Read and parse requirements from a file"""
-    logger = logging.getLogger("zap")
+    logger = logging.getLogger("midna")
     logger.info(f"Reading requirements from: {file_path}")
 
     if not os.path.exists(file_path):

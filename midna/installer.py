@@ -1,4 +1,4 @@
-"""Package installer for ZAP"""
+"""Package installer for Midna"""
 
 import logging
 import subprocess
@@ -7,7 +7,7 @@ from typing import List
 
 def install_packages(packages: List[str], dry_run: bool = False) -> int:
     """Install packages using pip"""
-    logger = logging.getLogger("zap")
+    logger = logging.getLogger("midna")
 
     if not packages:
         print("No packages to install.")

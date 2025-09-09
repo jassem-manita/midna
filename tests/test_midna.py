@@ -209,7 +209,7 @@ class TestMidnaUninstallCLI(unittest.TestCase):
             except (OSError, PermissionError):
                 pass
 
-    def test_zap_uninstall_nonexistent_file(self) -> None:
+    def test_midna_uninstall_nonexistent_file(self) -> None:
         """Test uninstall command with nonexistent file."""
         result = subprocess.run(
             [sys.executable, "-m", "piko", "--uninstall", "nonexistent.txt"],

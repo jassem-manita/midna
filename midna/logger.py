@@ -1,16 +1,16 @@
-"""Logging configuration for ZAP"""
+"""Logging configuration for Midna"""
 
 import logging
 from pathlib import Path
 
 
 def setup_logging(verbose: bool = False) -> logging.Logger:
-    """Set up logging for ZAP with file and optional console output"""
-    log_dir = Path.home() / ".zap" / "logs"
+    """Set up logging for Midna with file and optional console output"""
+    log_dir = Path.home() / ".midna" / "logs"
     log_dir.mkdir(parents=True, exist_ok=True)
-    log_file = log_dir / "zap.log"
+    log_file = log_dir / "midna.log"
 
-    logger = logging.getLogger("zap")
+    logger = logging.getLogger("midna")
     logger.setLevel(logging.DEBUG)
     logger.handlers.clear()
 

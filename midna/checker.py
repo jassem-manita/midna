@@ -1,4 +1,4 @@
-"""Package installation checker for ZAP"""
+"""Package installation checker for Midna"""
 
 import logging
 import subprocess
@@ -11,7 +11,7 @@ def check_installed_packages(
     packages: List[str],
 ) -> Tuple[List[str], List[str]]:
     """Check which packages are installed and which are missing"""
-    logger = logging.getLogger("zap")
+    logger = logging.getLogger("midna")
     logger.info("Checking installed packages...")
 
     try:

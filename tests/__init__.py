@@ -1,1 +1,1 @@
-# Tests for ZAP package
+# Tests for Midna package

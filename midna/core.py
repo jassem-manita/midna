@@ -1,4 +1,4 @@
-"""Main CLI interface for ZAP"""
+"""Main CLI interface for Midna"""
 
 from argparse import ArgumentParser, RawDescriptionHelpFormatter
 import sys
@@ -14,13 +14,13 @@ from .discovery import auto_discover_requirements
 def create_parser() -> ArgumentParser:
     """Create and configure the argument parser"""
     parser = ArgumentParser(
-        description="ZAP - Smart pip requirements installer",
+        description="Midna - Smart pip requirements installer",
         epilog=(
             "Examples:\n"
-            "  zap                    # Auto-discover requirements\n"
-            "  zap file.txt           # Use specific requirements file\n"
-            "  zap --dry-run          # Preview auto-discovered packages\n"
-            "  zap file.txt --dry-run # Preview specific file packages"
+            "  midna                    # Auto-discover requirements\n"
+            "  midna file.txt           # Use specific requirements file\n"
+            "  midna --dry-run          # Preview auto-discovered packages\n"
+            "  midna file.txt --dry-run # Preview specific file packages"
         ),
         formatter_class=RawDescriptionHelpFormatter,
     )
@@ -51,11 +51,11 @@ def create_parser() -> ArgumentParser:
 
 
 def main() -> int:
-    """Main entry point for ZAP"""
+    """Main entry point for Midna"""
     parser = create_parser()
     args = parser.parse_args()
     logger = setup_logging(args.verbose)
-    logger.info("ZAP started")
+    logger.info("Midna started")
 
     try:
         # Determine how to get packages
@@ -78,7 +78,7 @@ def main() -> int:
                 print("No packages discovered in current directory.")
                 print("Tip: You can:")
                 print("  - Create a requirements.txt file")
-                print("  - Run 'zap <filename>' to specify a file")
+                print("  - Run 'midna <filename>' to specify a file")
                 print("  - Add import statements to your Python files")
             return 0
 

@@ -31,7 +31,7 @@
 - [ ] No color coding in output (green for installed, yellow for updates)
 - [ ] No visual indication of dependency relationships
 - [ ] No clear differentiation between comments and package specifications
-- [ ] Help text still mentions "zap" instead of "midna" in examples
+- [x] Help text still mentions "zap" instead of "midna" in examples
 
 ### Output Formatting
 

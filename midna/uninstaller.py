@@ -1,4 +1,4 @@
-"""Package uninstaller for ZAP"""
+"""Package uninstaller for Midna"""
 
 import logging
 import subprocess
@@ -9,7 +9,7 @@ from .parser import parse_package_name, read_requirements
 
 def uninstall_packages(requirements_file: str, dry_run: bool = False) -> int:
     """Uninstall packages from a requirements file using pip"""
-    logger = logging.getLogger("zap")
+    logger = logging.getLogger("midna")
 
     try:
         packages = read_requirements(requirements_file)
@@ -25,7 +25,7 @@ def uninstall_packages(requirements_file: str, dry_run: bool = False) -> int:
 
 def _uninstall_package_list(packages: List[str], dry_run: bool = False) -> int:
     """Internal function to uninstall a list of packages"""
-    logger = logging.getLogger("zap")
+    logger = logging.getLogger("midna")
 
     if not packages:
         print("No packages to uninstall.")
@@ -73,7 +73,7 @@ def check_packages_to_uninstall(
     requirements_file: str,
 ) -> Tuple[List[str], List[str]]:
     """Check which packages from a requirements file are installed."""
-    logger = logging.getLogger("zap")
+    logger = logging.getLogger("midna")
     logger.info("Checking packages for uninstallation...")
 
     try:
@@ -89,7 +89,7 @@ def _check_package_list_to_uninstall(
     packages: List[str],
 ) -> Tuple[List[str], List[str]]:
     """Check which packages in a list are installed."""
-    logger = logging.getLogger("zap")
+    logger = logging.getLogger("midna")
 
     try:
         # Get list of installed packages
