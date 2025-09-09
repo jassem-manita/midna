@@ -2,7 +2,13 @@
 
 import logging
 import os
+import sys
 from typing import List
+
+if sys.version_info >= (3, 11):
+    from tomllib import load as _toml_load
+else:
+    from tomli import load as _toml_load
 
 
 def read_requirements(file_path: str) -> List[str]:
@@ -14,6 +20,15 @@ def read_requirements(file_path: str) -> List[str]:
         logger.error(f"Requirements file not found: {file_path}")
         raise FileNotFoundError(f"Requirements file '{file_path}' not found.")
 
+    # Handle TOML files
+    if file_path.endswith(".toml"):
+        try:
+            return parse_toml_requirements(file_path)
+        except ImportError as e:
+            logger.warning(f"Failed to read {file_path}: {e}")
+            # Fall back to treating it as a regular text file
+
+    # Handle regular requirements files
     try:
         with open(file_path, "r", encoding="utf-8") as f:
             lines = f.readlines()
@@ -60,6 +75,54 @@ def read_requirements(file_path: str) -> List[str]:
         logger.debug(f"Added package: {line}")
 
     logger.info(f"Found {len(packages)} packages in {file_path}")
+    return packages
+
+
+def parse_toml_requirements(file_path: str) -> List[str]:
+    """Parse requirements from a TOML file (pyproject.toml)"""
+    logger = logging.getLogger("midna")
+
+
+
+    with open(file_path, "rb") as f:
+        try:
+            toml_data = _toml_load(f)
+        except Exception as e:
+            logger.error(f"Error parsing TOML file: {e}")
+            raise
+
+    packages = []
+
+    # Get project dependencies
+    project_data = toml_data.get("project", {})
+    dependencies = project_data.get("dependencies", [])
+    if dependencies:
+        if isinstance(dependencies, list):
+            packages.extend(dependencies)
+
+    # Get optional dependencies
+    optional_deps = project_data.get("optional-dependencies", {})
+    for group, deps in optional_deps.items():
+        if isinstance(deps, list):
+            packages.extend(deps)
+
+    # Get build system requirements
+    build_system = toml_data.get("build-system", {})
+    build_requires = build_system.get("requires", [])
+    if build_requires:
+        if isinstance(build_requires, list):
+            packages.extend(build_requires)
+
+    # Filter out any non-package entries (like keywords)
+    # Keep basic requirements (pip, setuptools, wheel) and versioned packages
+    packages = [
+        pkg
+        for pkg in packages
+        if pkg in ["pip", "setuptools", "wheel"]
+        or any(op in pkg for op in [">=", "==", "<=", "<", ">"])
+    ]
+
+    logger.info(f"Found {len(packages)} packages in TOML file")
     return packages
 
 

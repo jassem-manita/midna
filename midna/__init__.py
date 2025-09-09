@@ -4,13 +4,13 @@ __version__ = "1.0.0"
 __author__ = "Jassem Manita"
 __description__ = "Smart pip requirements installer"
 
-from .core import main
-from .installer import install_packages
-from .uninstaller import uninstall_packages, check_packages_to_uninstall
-from .parser import read_requirements, parse_package_name
 from .checker import check_installed_packages
-from .logger import setup_logging
+from .core import main
 from .discovery import auto_discover_requirements
+from .installer import install_packages
+from .logger import setup_logging
+from .parser import parse_package_name, read_requirements
+from .uninstaller import check_packages_to_uninstall, uninstall_packages
 
 __all__ = [
     "main",

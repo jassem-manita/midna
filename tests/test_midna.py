@@ -1,10 +1,11 @@
 # Original long line:
-import unittest
-import tempfile
 import os
-import sys
 import subprocess
-from midna import parser, checker, uninstaller
+import sys
+import tempfile
+import unittest
+
+from midna import checker, parser, uninstaller
 
 
 class TestMidnaFunctionality(unittest.TestCase):

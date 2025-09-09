@@ -1,34 +1,77 @@
 """Main CLI interface for Midna"""
 
-from argparse import ArgumentParser, RawDescriptionHelpFormatter
 import sys
+from argparse import ArgumentParser, RawDescriptionHelpFormatter
 
 from .checker import check_installed_packages
+from .discovery import auto_discover_requirements
 from .installer import install_packages
-from .uninstaller import uninstall_packages, check_packages_to_uninstall
 from .logger import setup_logging
 from .parser import read_requirements
-from .discovery import auto_discover_requirements
+from .uninstaller import check_packages_to_uninstall, uninstall_packages
 
 
 def create_parser() -> ArgumentParser:
     """Create and configure the argument parser"""
     parser = ArgumentParser(
-        description="Midna - Smart pip requirements installer",
+        description=(
+            "Midna - Smart pip requirements installer and package manager.\n"
+            "Automatically discovers, manages, and extracts Python package "
+            "requirements."
+        ),
         epilog=(
             "Examples:\n"
-            "  midna                    # Auto-discover requirements\n"
-            "  midna file.txt           # Use specific requirements file\n"
-            "  midna --dry-run          # Preview auto-discovered packages\n"
-            "  midna file.txt --dry-run # Preview specific file packages"
+            "Basic usage:\n"
+            "  midna                  # Auto-discover and install\n"
+            "  midna file.txt         # Use specific requirements file\n"
+            "  midna --dry-run        # Preview without installing\n"
+            "\nPackage extraction:\n"
+            "  midna -o reqs.txt          # Extract auto-discovered packages\n"
+            "  midna file.txt -o deps.txt # Extract from specific file\n"
+            "\nLogging and verbosity:\n"
+            "  midna --log                # Enable logging to file\n"
+            "  midna -v                   # Show verbose output\n"
+            "  midna -v --log -o reqs.txt # Full output with logs\n"
+            "\nOther operations:\n"
+            "  midna -u                   # Uninstall mode\n"
+            "  midna --version            # Show version"
         ),
         formatter_class=RawDescriptionHelpFormatter,
     )
+    # Input options
     parser.add_argument(
         "requirements_file",
         nargs="?",
-        help="Path to requirements.txt file (optional - will auto-discover)",
+        help=(
+            "Path to requirements.txt or pyproject.toml file "
+            "(if not provided, will auto-discover)"
+        ),
+        metavar="FILE",
     )
+
+    # Output options
+    parser.add_argument(
+        "--output",
+        "-o",
+        help=(
+            "Extract discovered packages to a requirements file "
+            "(no files created unless specified)"
+        ),
+        metavar="FILE",
+    )
+    parser.add_argument(
+        "--log",
+        action="store_true",
+        help="Enable logging to ~/.midna/logs/midna.log",
+    )
+    parser.add_argument(
+        "--verbose",
+        "-v",
+        action="store_true",
+        help="Show detailed progress information",
+    )
+
+    # Operation modes
     parser.add_argument(
         "--uninstall",
         "-u",
@@ -39,11 +82,10 @@ def create_parser() -> ArgumentParser:
         "--dry-run",
         "-n",
         action="store_true",
-        help="Show what would be installed/uninstalled without doing it",
+        help="Preview actions without making any changes",
     )
-    parser.add_argument(
-        "--verbose", "-v", action="store_true", help="Enable verbose output"
-    )
+
+    # Information
     parser.add_argument(
         "--version", action="version", version="%(prog)s 1.0.0"
     )
@@ -54,8 +96,9 @@ def main() -> int:
     """Main entry point for Midna"""
     parser = create_parser()
     args = parser.parse_args()
-    logger = setup_logging(args.verbose)
-    logger.info("Midna started")
+    logger = setup_logging(args.verbose, args.log)
+    if args.log:
+        logger.info("Midna started")
 
     try:
         # Determine how to get packages
@@ -67,9 +110,14 @@ def main() -> int:
         else:
             # Auto-discovery mode
             print("Auto-discovering requirements...")
-            packages, discovery_method = auto_discover_requirements(".")
+            discovered_items = auto_discover_requirements(".")
+
+            # Convert list of tuples to list of package names
+            packages_info, discovery_method = discovered_items
+            packages = [pkg[0] for pkg in packages_info]
             source_info = discovery_method
-            logger.info(f"Auto-discovery used: {discovery_method}")
+
+            logger.info(f"Auto-discovery used: {source_info}")
 
         if not packages:
             if args.requirements_file:
@@ -82,7 +130,20 @@ def main() -> int:
                 print("  - Add import statements to your Python files")
             return 0
 
-        print(f"Found {len(packages)} packages ({source_info})")
+        print(f"\nFound {len(packages)} packages ({source_info})")
+
+        # Save packages to output file if requested
+        if args.output:
+            try:
+                with open(args.output, "w") as f:
+                    for package in packages:
+                        f.write(f"{package}\n")
+                print(f"\nSaved discovered packages to: {args.output}")
+                logger.info(f"Saved packages to: {args.output}")
+            except Exception as e:
+                print(f"ERROR: Failed to save packages: {e}")
+                logger.error(f"Failed to save packages: {e}")
+                return 1
 
         # Show packages that were found
         if args.verbose or not args.requirements_file:

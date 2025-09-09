@@ -6,6 +6,8 @@ import os
 from pathlib import Path
 from typing import List, Set, Tuple
 
+from .package_classifier import classify_packages
+
 
 def find_requirements_files(directory: str = ".") -> List[str]:
     """Find requirements files in the given directory"""
@@ -222,12 +224,15 @@ def filter_standard_library(imports: Set[str]) -> Set[str]:
     }
 
 
-def auto_discover_requirements(directory: str = ".") -> Tuple[List[str], str]:
+def auto_discover_requirements(
+    directory: str = ".",
+) -> Tuple[List[Tuple[str, str]], str]:
     """
     Auto-discover requirements using multiple strategies
 
     Returns:
-        Tuple of (packages_list, discovery_method)
+        Tuple of (packages_list, discovery_method) where packages_list contains
+        tuples of (package_name, version) for third-party packages
     """
     logger = logging.getLogger("midna")
     logger.info("Starting auto-discovery of requirements...")
@@ -252,7 +257,7 @@ def auto_discover_requirements(directory: str = ".") -> Tuple[List[str], str]:
         from .parser import read_requirements
 
         try:
-            packages = read_requirements(preferred_file)
+            packages = [(pkg, "") for pkg in read_requirements(preferred_file)]
             return packages, f"requirements file: {preferred_file}"
         except Exception as e:
             logger.warning(f"Failed to read {preferred_file}: {e}")
@@ -262,10 +267,15 @@ def auto_discover_requirements(directory: str = ".") -> Tuple[List[str], str]:
     discovered_imports = analyze_project_imports(directory)
 
     if discovered_imports:
-        # Convert to list and sort for consistent output
-        packages = sorted(list(discovered_imports))
-        logger.info(f"Discovered packages from imports: {packages}")
-        return packages, "import analysis"
+        # Classify the discovered packages
+        stdlib, project, third_party = classify_packages(
+            discovered_imports, directory
+        )
+        logger.info(f"Found {len(stdlib)} stdlib packages")
+        logger.info(f"Found {len(project)} project packages")
+        logger.info(f"Found {len(third_party)} third-party packages")
+
+        return third_party, "import analysis"
 
     # Strategy 3: No packages found
     logger.info("No packages discovered")
