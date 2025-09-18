@@ -6,9 +6,9 @@ from pathlib import Path
 from typing import List, Set, Tuple
 
 try:
-    from importlib.metadata import distribution, distributions
+    from importlib.metadata import distribution
 except ImportError:
-    from importlib_metadata import distribution, distributions  # type: ignore
+    from importlib_metadata import distribution  # type: ignore
 
 # Standard library modules in Python 3
 STDLIB_MODULES = {

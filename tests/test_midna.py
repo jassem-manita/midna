@@ -58,7 +58,6 @@ class TestMidnaCLI(unittest.TestCase):
     def test_midna_version_command(self) -> None:
         # Get the actual version from package metadata
         version = importlib.metadata.version("midna")
-        
         result = subprocess.run(
             [sys.executable, "-m", "midna", "--version"],
             capture_output=True,
