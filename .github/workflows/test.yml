@@ -44,7 +44,12 @@ jobs:
           midna --dry-run test_requirements.txt
 
       - name: Check code formatting
-        run: black --check midna/
+        run: |
+          echo "Running code format check..."
+          if ! black --check --quiet midna/; then
+            echo "Error: Code formatting issues found. Please run 'black midna/' locally to fix."
+            exit 1
+          fi
 
       - name: Run linting
         run: flake8 midna/ tests/

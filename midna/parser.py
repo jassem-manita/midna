@@ -82,8 +82,6 @@ def parse_toml_requirements(file_path: str) -> List[str]:
     """Parse requirements from a TOML file (pyproject.toml)"""
     logger = logging.getLogger("midna")
 
-
-
     with open(file_path, "rb") as f:
         try:
             toml_data = _toml_load(f)

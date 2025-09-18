@@ -41,9 +41,7 @@ def create_parser() -> ArgumentParser:
     )
     # Version
     parser.add_argument(
-        "--version",
-        action="store_true",
-        help="Show version and exit"
+        "--version", action="store_true", help="Show version and exit"
     )
 
     # Input options
