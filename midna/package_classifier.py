@@ -4,6 +4,7 @@ import importlib.util
 import sys
 from pathlib import Path
 from typing import List, Set, Tuple
+
 try:
     from importlib.metadata import distribution, distributions
 except ImportError:
@@ -11,9 +12,9 @@ except ImportError:
 
 # Standard library modules in Python 3
 STDLIB_MODULES = {
-    name.split('.')[0]
+    name.split(".")[0]
     for name in list(sys.builtin_module_names) + list(sys.modules)
-    if name.split('.')[0] not in {'test', 'pip', 'setuptools'}
+    if name.split(".")[0] not in {"test", "pip", "setuptools"}
 }
 
 # Common test and internal modules to ignore
