@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "midna"
-version = "1.0.3"
+version = "1.0.4"
 description = "Smart pip requirements installer - Midna manages your installations"
 readme = "README.md"
 license = {text = "Apache-2.0"}
