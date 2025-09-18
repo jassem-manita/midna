@@ -4,6 +4,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+import importlib.metadata
 
 from midna import checker, parser, uninstaller
 
@@ -55,13 +56,16 @@ class TestMidnaFunctionality(unittest.TestCase):
 class TestMidnaCLI(unittest.TestCase):
 
     def test_midna_version_command(self) -> None:
+        # Get the actual version from package metadata
+        version = importlib.metadata.version("midna")
+        
         result = subprocess.run(
             [sys.executable, "-m", "midna", "--version"],
             capture_output=True,
             text=True,
         )
         self.assertEqual(result.returncode, 0)
-        self.assertIn("1.0.0", result.stdout)
+        self.assertIn(version, result.stdout)
 
     def test_midna_help_command(self) -> None:
         result = subprocess.run(

@@ -2,6 +2,7 @@
 
 import sys
 from argparse import ArgumentParser, RawDescriptionHelpFormatter
+import importlib.metadata
 
 from .checker import check_installed_packages
 from .discovery import auto_discover_requirements
@@ -38,6 +39,13 @@ def create_parser() -> ArgumentParser:
         ),
         formatter_class=RawDescriptionHelpFormatter,
     )
+    # Version
+    parser.add_argument(
+        "--version",
+        action="store_true",
+        help="Show version and exit"
+    )
+
     # Input options
     parser.add_argument(
         "requirements_file",
@@ -85,10 +93,6 @@ def create_parser() -> ArgumentParser:
         help="Preview actions without making any changes",
     )
 
-    # Information
-    parser.add_argument(
-        "--version", action="version", version="%(prog)s 1.0.0"
-    )
     return parser
 
 
@@ -96,6 +100,16 @@ def main() -> int:
     """Main entry point for Midna"""
     parser = create_parser()
     args = parser.parse_args()
+
+    if args.version:
+        try:
+            version = importlib.metadata.version("midna")
+            print(f"Midna version {version}")
+            return 0
+        except importlib.metadata.PackageNotFoundError:
+            print("Midna version unknown (package not installed)")
+            return 1
+
     logger = setup_logging(args.verbose, args.log)
     if args.log:
         logger.info("Midna started")

@@ -4,14 +4,16 @@ import importlib.util
 import sys
 from pathlib import Path
 from typing import List, Set, Tuple
-
-import pkg_resources
+try:
+    from importlib.metadata import distribution, distributions
+except ImportError:
+    from importlib_metadata import distribution, distributions  # type: ignore
 
 # Standard library modules in Python 3
 STDLIB_MODULES = {
     name.split('.')[0]
     for name in list(sys.builtin_module_names) + list(sys.modules)
-    if name.split('.')[0] not in {'test', 'pip', 'pkg_resources', 'setuptools'}
+    if name.split('.')[0] not in {'test', 'pip', 'setuptools'}
 }
 
 # Common test and internal modules to ignore
@@ -72,10 +74,9 @@ def is_project_package(package_name: str, project_root: str) -> bool:
 def get_package_version(package_name: str) -> str:
     """Get the installed version of a package"""
     try:
-        # Try getting version from pkg_resources first
-        dist = pkg_resources.get_distribution(package_name)
-        return str(dist.version)
-    except pkg_resources.DistributionNotFound:
+        # Try getting version from importlib.metadata first
+        return str(distribution(package_name).version)
+    except ImportError:
         try:
             # Try importing the package and checking __version__
             module = importlib.import_module(package_name)
