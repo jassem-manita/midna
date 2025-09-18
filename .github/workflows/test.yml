@@ -44,6 +44,7 @@ jobs:
           midna --dry-run test_requirements.txt
 
       - name: Check code formatting
+        shell: bash
         run: |
           echo "Running code format check..."
           if ! black --check --quiet midna/; then
