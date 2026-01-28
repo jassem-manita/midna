@@ -58,6 +58,7 @@ jobs:
         run: midna --version
 
       - name: Run tests with coverage
+        shell: bash
         run: |
           pytest tests/ \
             --cov=midna \
