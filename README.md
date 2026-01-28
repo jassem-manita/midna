@@ -1,3 +1,5 @@
+[![codecov](https://codecov.io/gh/jassem-manita/midna/branch/main/graph/badge.svg)](https://codecov.io/gh/jassem-manita/midna)
+
 # Midna - The Smart Python Package Assistant
 
 An intelligent tool that automatically manages your Python dependencies by analyzing your actual code usage.

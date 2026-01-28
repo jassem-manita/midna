@@ -34,8 +34,19 @@ jobs:
       - name: Test package installation
         run: midna --version
 
-      - name: Run tests
-        run: pytest tests/ -v
+      - name: Run tests with coverage
+        run: pytest tests/ --cov=midna --cov-branch --cov-report=xml --junitxml=junit.xml -o junit_family=legacy -v
+
+      - name: Upload test results to Codecov
+        uses: codecov/test-results-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          file: ./coverage.xml
 
       - name: Test CLI functionality
         run: |
