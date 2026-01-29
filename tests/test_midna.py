@@ -5,6 +5,7 @@ import tempfile
 import unittest
 import unittest.mock
 import importlib.metadata
+from unittest.mock import Mock
 
 from midna import checker, installer, parser, uninstaller
 
@@ -113,30 +114,30 @@ class TestMidnaCLI(unittest.TestCase):
 
 class TestMidnaInstaller(unittest.TestCase):
 
-    @unittest.mock.patch('subprocess.run')
-    def test_install_packages_success(self, mock_run) -> None:
+    @unittest.mock.patch("subprocess.run")
+    def test_install_packages_success(self, mock_run: Mock) -> None:
         """Test successful package installation."""
         mock_run.return_value = unittest.mock.MagicMock(returncode=0)
-        result = installer.install_packages(['requests', 'numpy'])
+        result = installer.install_packages(["requests", "numpy"])
         self.assertEqual(result, 0)
         mock_run.assert_called_once_with(
-            ['pip', 'install', 'requests', 'numpy'],
+            ["pip", "install", "requests", "numpy"],
             check=True,
             capture_output=True,
-            shell=False
+            shell=False,
         )
 
-    @unittest.mock.patch('subprocess.run')
-    def test_install_packages_failure(self, mock_run) -> None:
+    @unittest.mock.patch("subprocess.run")
+    def test_install_packages_failure(self, mock_run: Mock) -> None:
         """Test failed package installation."""
-        mock_run.side_effect = subprocess.CalledProcessError(1, 'pip')
-        result = installer.install_packages(['fake-package'])
+        mock_run.side_effect = subprocess.CalledProcessError(1, "pip")
+        result = installer.install_packages(["fake-package"])
         self.assertEqual(result, 1)
         mock_run.assert_called_once_with(
-            ['pip', 'install', 'fake-package'],
+            ["pip", "install", "fake-package"],
             check=True,
             capture_output=True,
-            shell=False
+            shell=False,
         )
 
     def test_install_packages_empty_list(self) -> None:
@@ -146,7 +147,7 @@ class TestMidnaInstaller(unittest.TestCase):
 
     def test_install_packages_dry_run(self) -> None:
         """Test dry run installation."""
-        result = installer.install_packages(['requests'], dry_run=True)
+        result = installer.install_packages(["requests"], dry_run=True)
         self.assertEqual(result, 0)
 
 
@@ -203,30 +204,30 @@ class TestMidnaUninstaller(unittest.TestCase):
             except (OSError, PermissionError):
                 pass
 
-    @unittest.mock.patch('subprocess.run')
-    def test_uninstall_package_list_success(self, mock_run) -> None:
+    @unittest.mock.patch("subprocess.run")
+    def test_uninstall_package_list_success(self, mock_run: Mock) -> None:
         """Test successful package uninstallation."""
         mock_run.return_value = unittest.mock.MagicMock(returncode=0)
-        result = uninstaller._uninstall_package_list(['requests', 'numpy'])
+        result = uninstaller._uninstall_package_list(["requests", "numpy"])
         self.assertEqual(result, 0)
         mock_run.assert_called_once_with(
-            ['pip', 'uninstall', '-y', 'requests', 'numpy'],
+            ["pip", "uninstall", "-y", "requests", "numpy"],
             check=True,
             capture_output=True,
-            shell=False
+            shell=False,
         )
 
-    @unittest.mock.patch('subprocess.run')
-    def test_uninstall_package_list_failure(self, mock_run) -> None:
+    @unittest.mock.patch("subprocess.run")
+    def test_uninstall_package_list_failure(self, mock_run: Mock) -> None:
         """Test failed package uninstallation."""
-        mock_run.side_effect = subprocess.CalledProcessError(1, 'pip')
-        result = uninstaller._uninstall_package_list(['fake-package'])
+        mock_run.side_effect = subprocess.CalledProcessError(1, "pip")
+        result = uninstaller._uninstall_package_list(["fake-package"])
         self.assertEqual(result, 1)
         mock_run.assert_called_once_with(
-            ['pip', 'uninstall', '-y', 'fake-package'],
+            ["pip", "uninstall", "-y", "fake-package"],
             check=True,
             capture_output=True,
-            shell=False
+            shell=False,
         )
 
 
