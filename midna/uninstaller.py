@@ -53,7 +53,7 @@ def _uninstall_package_list(packages: List[str], dry_run: bool = False) -> int:
     logger.debug(f"Running command: {' '.join(cmd)}")
 
     try:
-        result = subprocess.run(cmd, check=True, capture_output=False)
+        result = subprocess.run(cmd, check=True, capture_output=True, shell=False)
         logger.info("Uninstallation completed successfully")
         print("Uninstallation completed successfully!")
         return result.returncode
@@ -98,6 +98,7 @@ def _check_package_list_to_uninstall(
             capture_output=True,
             text=True,
             check=True,
+            shell=False,
         )
 
         installed_raw = (
