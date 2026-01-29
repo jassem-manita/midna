@@ -1,4 +1,5 @@
 [![codecov](https://codecov.io/gh/jassem-manita/midna/branch/main/graph/badge.svg)](https://codecov.io/gh/jassem-manita/midna)
+[![Security Scan](https://github.com/jassem-manita/midna/workflows/Security%20Scanning/badge.svg)](https://github.com/jassem-manita/midna/actions)
 
 # Midna - The Smart Python Package Assistant
 
@@ -104,6 +105,19 @@ Options:
 - **Safe Execution** - Provides dry-run mode for verification
 - **Robust Error Handling** - Ensures reliable operation across diverse codebases
 
+## Security
+
+Midna implements automated security scanning to ensure safe package management:
+
+- **Dependency Vulnerability Scanning** - Weekly checks for known CVEs using pip-audit
+- **Code Security Analysis** - Bandit security linting on every commit
+- **Secure Subprocess Execution** - Explicit `shell=False` in all pip calls
+- **Minimal Attack Surface** - Only `tomli` dependency for TOML parsing
+
+Security reports are automatically generated and can be found in the [Actions tab](https://github.com/jassem-manita/midna/actions).
+
+For security-related issues, please see [SECURITY.md](SECURITY.md).
+
 ## Use cases
 
 **New project setup:**
@@ -154,7 +168,10 @@ Found a bug or want to add a feature?
 2. Create a branch: `git checkout -b my-feature`
 3. Install dev dependencies: `pip install -e ".[dev]"`
 4. Run tests: `pytest tests/`
-5. Submit a PR
+5. Run security checks: `bandit -r midna/ -x tests,test`
+6. Submit a PR
+
+All contributions are automatically tested for security issues using Bandit and pip-audit.
 
 ## License
 
