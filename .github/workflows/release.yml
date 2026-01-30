@@ -14,7 +14,6 @@ env:
   PYTHON_VERSION: '3.11'
 
 jobs:
-  # Pre-release validation
   validate:
     runs-on: ubuntu-latest
     outputs:
@@ -26,102 +25,68 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
+      - uses: actions/setup-python@v4
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          python -m pip install build twine wheel setuptools
-
-      - name: Validate version format
+      - name: Resolve version
         id: version
         run: |
           if [[ "${{ github.event_name }}" == "release" ]]; then
-            # Triggered by release - extract from tag
             VERSION=${GITHUB_REF#refs/tags/v}
-          elif [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
-            # Manual trigger - use input or extract from pyproject.toml
+          else
             if [[ -n "${{ inputs.version }}" ]]; then
               VERSION="${{ inputs.version }}"
             else
               VERSION=$(grep '^version =' pyproject.toml | sed 's/version = "\(.*\)"/\1/')
             fi
-          else
-            echo "Unsupported trigger: ${{ github.event_name }}"
-            exit 1
           fi
-
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "tag=v$VERSION" >> $GITHUB_OUTPUT
 
-  # Run full test suite
   test:
     uses: ./.github/workflows/test.yml
 
-  # Security scanning (runs in parallel with tests)
   security:
     uses: ./.github/workflows/security.yml
 
-  # Build and validate package
   build:
     runs-on: ubuntu-latest
-    needs: [validate, test, security]  # All three can run in parallel
+    needs: [validate, test, security]
     outputs:
       version: ${{ needs.validate.outputs.version }}
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
+      - uses: actions/setup-python@v4
         with:
           python-version: ${{ env.PYTHON_VERSION }}
-  
-      - name: Install build module
-        run: |
-          python -m pip install --upgrade pip
-          python -m pip install build
 
-      - name: Install twine module
+      - name: Install build tools
         run: |
           python -m pip install --upgrade pip
-          python -m pip install twine
+          python -m pip install build twine
 
       - name: Build package
-        run: |
-          mkdir -p dist
-          python -m build
+        run: python -m build
 
       - name: Validate package
         run: |
-          if [ ! -d "dist" ] || [ -z "$(ls -A dist)" ]; then
-            echo "Error: 'dist/' directory is empty or does not exist. Ensure the build step is generating the distribution files."
-            exit 1
-          fi
           twine check dist/*
-          echo "Package validation successful"
-
-      - name: List dist directory after build
-        run: |
-          echo "Listing contents of dist directory after build:"
           ls -la dist
 
-      - name: Test package installation
+      - name: Test wheel install
         run: |
           pip install dist/*.whl --force-reinstall
-          python -c "import midna; print(f'Midna {midna.__version__} installed successfully')"
+          python -c "import midna; print(midna.__version__)"
 
-      - name: Upload build artifacts
+      - name: Upload dist artifact
         uses: actions/upload-artifact@v4
         with:
           name: dist-${{ needs.validate.outputs.version }}
           path: dist/
-          retention-days: 30
 
-  # Publish to PyPI
   publish:
     runs-on: ubuntu-latest
     needs: build
@@ -134,26 +99,30 @@ jobs:
         with:
           name: dist-${{ needs.build.outputs.version }}
 
-      - name: List files
-        run: ls -la
+      - name: Restore dist directory
+        run: |
+          mkdir -p dist
+          mv *.whl *.tar.gz dist/
+
+      - name: Verify dist contents
+        run: ls -la dist
 
       - name: Publish to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           print-hash: true
 
-  # Post-release cleanup and notifications
   cleanup:
     runs-on: ubuntu-latest
     needs: publish
     if: always()
 
     steps:
-      - name: Notify success/failure
+      - name: Notify result
         run: |
-          if [ "${{ needs.publish.result }}" = "success" ] && [ "${{ needs.create_release.result }}" = "success" ]; then
-            echo "Release ${{ needs.validate.outputs.version }} completed successfully!"
+          if [ "${{ needs.publish.result }}" = "success" ]; then
+            echo "Release ${{ needs.build.outputs.version }} published successfully"
           else
-            echo "Release failed. Check logs for details."
+            echo "Release failed"
             exit 1
           fi
