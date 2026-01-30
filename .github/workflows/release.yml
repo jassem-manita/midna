@@ -91,10 +91,16 @@ jobs:
           python -m pip install twine
 
       - name: Build package
-        run: python -m build
+        run: |
+          mkdir -p dist
+          python -m build
 
       - name: Validate package
         run: |
+          if [ ! -d "dist" ] || [ -z "$(ls -A dist)" ]; then
+            echo "Error: 'dist/' directory is empty or does not exist. Ensure the build step is generating the distribution files."
+            exit 1
+          fi
           twine check dist/*
           echo "Package validation successful"
 
