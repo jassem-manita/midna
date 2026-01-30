@@ -53,17 +53,17 @@ jobs:
             echo "Unsupported trigger: ${{ github.event_name }}"
             exit 1
           fi
-          
+
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "tag=v$VERSION" >> $GITHUB_OUTPUT
 
   # Run full test suite
   test:
-    uses: ./.github/workflows/test.yml@98928455b827ed2d53b992f219d6e807fd95272a
+    uses: ./.github/workflows/test.yml@39f63b4c445300cefc892e2ddd33cc931be0a142
 
   # Security scanning (runs in parallel with tests)
   security:
-    uses: ./.github/workflows/security.yml@98928455b827ed2d53b992f219d6e807fd95272a
+    uses: ./.github/workflows/security.yml@39f63b4c445300cefc892e2ddd33cc931be0a142
 
   # Build and validate package
   build:
