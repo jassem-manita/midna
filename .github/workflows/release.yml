@@ -59,11 +59,11 @@ jobs:
 
   # Run full test suite
   test:
-    uses: ./.github/workflows/test.yml@16bbcc7
+    uses: ./.github/workflows/test.yml
 
   # Security scanning (runs in parallel with tests)
   security:
-    uses: ./.github/workflows/security.yml@16bbcc7
+    uses: ./.github/workflows/security.yml
 
   # Build and validate package
   build:
