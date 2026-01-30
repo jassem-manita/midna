@@ -6,6 +6,8 @@ __pycache__/
 *$py.class
 *.so
 
+release.yml.backup
+
 # Distribution / packaging
 .Python
 build/
