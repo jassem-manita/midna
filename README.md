@@ -116,7 +116,7 @@ Midna implements automated security scanning to ensure safe package management:
 
 Security reports are automatically generated and can be found in the [Actions tab](https://github.com/jassem-manita/midna/actions).
 
-For security-related issues, please see [SECURITY.md](SECURITY.md).
+For security-related issues, please see [SECURITY.md](https://github.com/jassem-manita/midna/blob/main/SECURITY.md).
 
 ## Use cases
 
@@ -175,10 +175,10 @@ All contributions are automatically tested for security issues using Bandit and 
 
 ## License
 
-Apache 2.0 - see LICENSE file
+Apache 2.0 - see [LICENSE](https://github.com/jassem-manita/midna/blob/main/LICENSE)
 
 ## Author
 
 Jassem Manita  
 GitHub: [@jassem-manita](https://github.com/jassem-manita)  
-Email: [jasemmanita00@gmail.com](mailto:jasemmanita00@gmail.com)
+Email: jasemmanita00 [at] gmail.com
