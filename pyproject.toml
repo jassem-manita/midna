@@ -4,10 +4,10 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "midna"
-version = "1.0.4"
+version = "1.0.5"
 description = "Smart pip requirements installer - Midna manages your installations"
 readme = "README.md"
-license = {text = "Apache-2.0"}
+license = "Apache-2.0"
 authors = [
     {name = "Jassem Manita", email = "jasemmanita00@gmail.com"}
 ]

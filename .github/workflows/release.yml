@@ -111,8 +111,8 @@ jobs:
       - name: Notify success/failure
         run: |
           if [ "${{ needs.publish.result }}" = "success" ] && [ "${{ needs.create_release.result }}" = "success" ]; then
-            echo "🎉 Release ${{ needs.validate.outputs.version }} completed successfully!"
+            echo "Release ${{ needs.validate.outputs.version }} completed successfully!"
           else
-            echo "❌ Release failed. Check logs for details."
+            echo "Release failed. Check logs for details."
             exit 1
           fi
