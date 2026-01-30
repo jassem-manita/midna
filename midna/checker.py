@@ -21,6 +21,7 @@ def check_installed_packages(
             capture_output=True,
             text=True,
             check=True,
+            shell=False,
         )
 
         installed_raw = (

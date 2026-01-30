@@ -1,0 +1,100 @@
+name: Security Scanning
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+  schedule:
+    # Run weekly on Sunday at midnight UTC
+    - cron: '0 0 * * 0'
+
+jobs:
+  dependency-scan:
+    name: Dependency Vulnerability Scan
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install pip-audit
+        run: |
+          python -m pip install --upgrade pip
+          pip install pip-audit
+
+      - name: Run dependency vulnerability scan
+        run: |
+          echo "Scanning for dependency vulnerabilities..."
+          pip-audit --desc --format json --output audit-report.json || true
+
+      - name: Display results
+        run: |
+          if [ -f audit-report.json ]; then
+            echo "Vulnerability scan completed. Results:"
+            pip-audit --desc || true
+          else
+            echo "No vulnerabilities found!"
+          fi
+
+      - name: Upload audit report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dependency-audit-report
+          path: audit-report.json
+          retention-days: 30
+
+  code-security:
+    name: Code Security Analysis
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install Bandit
+        run: |
+          python -m pip install --upgrade pip
+          pip install bandit[toml]
+
+      - name: Run Bandit security scan
+        run: |
+          echo "Running Bandit security analysis..."
+          bandit -r midna/ -x tests,test -s B101,B601 -f json -o bandit-report.json || true
+
+      - name: Display Bandit results
+        run: |
+          echo "Bandit security scan results:"
+          bandit -r midna/ -x tests,test -s B101,B601 || true
+
+      - name: Upload Bandit report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bandit-security-report
+          path: bandit-report.json
+          retention-days: 30
+
+      - name: Check for high-severity issues
+        run: |
+          if [ -f bandit-report.json ]; then
+            high_issues=$(jq '.results | map(select(.issue_severity == "HIGH")) | length' bandit-report.json)
+            if [ "$high_issues" -gt 0 ]; then
+              echo "Found $high_issues HIGH severity security issues!"
+              echo "Please review the Bandit report and fix these issues."
+              exit 1
+            else
+              echo "No HIGH severity security issues found."
+            fi
+          fi

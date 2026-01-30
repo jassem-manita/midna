@@ -31,7 +31,9 @@ def install_packages(packages: List[str], dry_run: bool = False) -> int:
     logger.debug(f"Running command: {' '.join(cmd)}")
 
     try:
-        result = subprocess.run(cmd, check=True, capture_output=False)
+        result = subprocess.run(
+            cmd, check=True, capture_output=True, shell=False
+        )
         logger.info("Installation completed successfully")
         print("Installation completed successfully!")
         return result.returncode

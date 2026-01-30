@@ -1,12 +1,13 @@
-# Original long line:
 import os
 import subprocess
 import sys
 import tempfile
 import unittest
+import unittest.mock
 import importlib.metadata
+from unittest.mock import Mock
 
-from midna import checker, parser, uninstaller
+from midna import checker, installer, parser, uninstaller
 
 
 class TestMidnaFunctionality(unittest.TestCase):
@@ -111,6 +112,45 @@ class TestMidnaCLI(unittest.TestCase):
         self.assertNotEqual(result.returncode, 0)
 
 
+class TestMidnaInstaller(unittest.TestCase):
+
+    @unittest.mock.patch("subprocess.run")
+    def test_install_packages_success(self, mock_run: Mock) -> None:
+        """Test successful package installation."""
+        mock_run.return_value = unittest.mock.MagicMock(returncode=0)
+        result = installer.install_packages(["requests", "numpy"])
+        self.assertEqual(result, 0)
+        mock_run.assert_called_once_with(
+            ["pip", "install", "requests", "numpy"],
+            check=True,
+            capture_output=True,
+            shell=False,
+        )
+
+    @unittest.mock.patch("subprocess.run")
+    def test_install_packages_failure(self, mock_run: Mock) -> None:
+        """Test failed package installation."""
+        mock_run.side_effect = subprocess.CalledProcessError(1, "pip")
+        result = installer.install_packages(["fake-package"])
+        self.assertEqual(result, 1)
+        mock_run.assert_called_once_with(
+            ["pip", "install", "fake-package"],
+            check=True,
+            capture_output=True,
+            shell=False,
+        )
+
+    def test_install_packages_empty_list(self) -> None:
+        """Test installing empty package list."""
+        result = installer.install_packages([])
+        self.assertEqual(result, 0)
+
+    def test_install_packages_dry_run(self) -> None:
+        """Test dry run installation."""
+        result = installer.install_packages(["requests"], dry_run=True)
+        self.assertEqual(result, 0)
+
+
 class TestMidnaUninstaller(unittest.TestCase):
 
     def test_check_packages_to_uninstall_with_valid_file(self) -> None:
@@ -163,6 +203,32 @@ class TestMidnaUninstaller(unittest.TestCase):
                 os.unlink(temp_path)
             except (OSError, PermissionError):
                 pass
+
+    @unittest.mock.patch("subprocess.run")
+    def test_uninstall_package_list_success(self, mock_run: Mock) -> None:
+        """Test successful package uninstallation."""
+        mock_run.return_value = unittest.mock.MagicMock(returncode=0)
+        result = uninstaller._uninstall_package_list(["requests", "numpy"])
+        self.assertEqual(result, 0)
+        mock_run.assert_called_once_with(
+            ["pip", "uninstall", "-y", "requests", "numpy"],
+            check=True,
+            capture_output=True,
+            shell=False,
+        )
+
+    @unittest.mock.patch("subprocess.run")
+    def test_uninstall_package_list_failure(self, mock_run: Mock) -> None:
+        """Test failed package uninstallation."""
+        mock_run.side_effect = subprocess.CalledProcessError(1, "pip")
+        result = uninstaller._uninstall_package_list(["fake-package"])
+        self.assertEqual(result, 1)
+        mock_run.assert_called_once_with(
+            ["pip", "uninstall", "-y", "fake-package"],
+            check=True,
+            capture_output=True,
+            shell=False,
+        )
 
 
 class TestMidnaUninstallCLI(unittest.TestCase):
