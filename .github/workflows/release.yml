@@ -3,6 +3,12 @@ name: Release Pipeline
 on:
   release:
     types: [published]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to release (optional, will use tag if not provided)'
+        required: false
+        type: string
 
 env:
   PYTHON_VERSION: '3.11'
@@ -33,7 +39,21 @@ jobs:
       - name: Validate version format
         id: version
         run: |
-          VERSION=${GITHUB_REF#refs/tags/v}
+          if [[ "${{ github.event_name }}" == "release" ]]; then
+            # Triggered by release - extract from tag
+            VERSION=${GITHUB_REF#refs/tags/v}
+          elif [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            # Manual trigger - use input or extract from pyproject.toml
+            if [[ -n "${{ inputs.version }}" ]]; then
+              VERSION="${{ inputs.version }}"
+            else
+              VERSION=$(grep '^version =' pyproject.toml | sed 's/version = "\(.*\)"/\1/')
+            fi
+          else
+            echo "Unsupported trigger: ${{ github.event_name }}"
+            exit 1
+          fi
+          
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "tag=v$VERSION" >> $GITHUB_OUTPUT
 
