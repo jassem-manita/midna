@@ -104,6 +104,11 @@ jobs:
           twine check dist/*
           echo "Package validation successful"
 
+      - name: List dist directory after build
+        run: |
+          echo "Listing contents of dist directory after build:"
+          ls -la dist
+
       - name: Test package installation
         run: |
           pip install dist/*.whl --force-reinstall
