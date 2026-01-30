@@ -1,0 +1,118 @@
+name: Release Pipeline
+
+on:
+  release:
+    types: [published]
+
+env:
+  PYTHON_VERSION: '3.11'
+
+jobs:
+  # Pre-release validation
+  validate:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      tag: ${{ steps.version.outputs.tag }}
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install build twine wheel setuptools
+
+      - name: Validate version format
+        id: version
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/v}
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "tag=v$VERSION" >> $GITHUB_OUTPUT
+
+  # Run full test suite
+  test:
+    uses: ./.github/workflows/test.yml
+
+  # Security scanning (runs in parallel with tests)
+  security:
+    uses: ./.github/workflows/security.yml
+
+  # Build and validate package
+  build:
+    runs-on: ubuntu-latest
+    needs: [validate, test, security]  # All three can run in parallel
+    outputs:
+      version: ${{ needs.validate.outputs.version }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Build package
+        run: python -m build
+
+      - name: Validate package
+        run: |
+          twine check dist/*
+          echo "Package validation successful"
+
+      - name: Test package installation
+        run: |
+          pip install dist/*.whl --force-reinstall
+          python -c "import midna; print(f'Midna {midna.__version__} installed successfully')"
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-${{ needs.validate.outputs.version }}
+          path: dist/
+          retention-days: 30
+
+  # Publish to PyPI
+  publish:
+    runs-on: ubuntu-latest
+    needs: build
+    environment: pypi
+    permissions:
+      id-token: write
+
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist-${{ needs.build.outputs.version }}
+
+      - name: List files
+        run: ls -la
+
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          print-hash: true
+
+  # Post-release cleanup and notifications
+  cleanup:
+    runs-on: ubuntu-latest
+    needs: publish
+    if: always()
+
+    steps:
+      - name: Notify success/failure
+        run: |
+          if [ "${{ needs.publish.result }}" = "success" ] && [ "${{ needs.create_release.result }}" = "success" ]; then
+            echo "🎉 Release ${{ needs.validate.outputs.version }} completed successfully!"
+          else
+            echo "❌ Release failed. Check logs for details."
+            exit 1
+          fi
